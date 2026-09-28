@@ -1,0 +1,27 @@
+{
+  "name": "canchitas",
+  "private": true,
+  "packageManager": "pnpm@12.6.0",
+  "engines": {
+    "node": "24.21.0",
+    "pnpm": "12.6.0"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "lefthook install"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "21.2.3",
+    "@commitlint/config-conventional": "21.2.3",
+    "lefthook": "2.1.14",
+    "prettier": "3.9.9",
+    "turbo": "2.11.5",
+    "typescript": "6.0.3"
+  }
+}
