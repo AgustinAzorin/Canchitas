@@ -37,3 +37,4 @@ google-services.json
 # Sistema
 .DS_Store
 Thumbs.db
+next-env.d.ts

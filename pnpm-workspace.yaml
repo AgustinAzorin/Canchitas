@@ -7,9 +7,11 @@ packages:
 # Paquetes autorizados a correr scripts de instalación.
 allowBuilds:
   cpu-features: false
+  esbuild: true
   lefthook: true
   protobufjs: false
   ssh2: false
+  unrs-resolver: false
 
 # pnpm no instala versiones con menos de un día de publicadas; estas se fijaron
 # como última estable el día que se agregaron.

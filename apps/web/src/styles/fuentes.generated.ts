@@ -1,16 +1,21 @@
 // Generado por scripts/src/tokens desde docs/design-system/tokens.json. No editar.
-import { Barlow, Barlow_Condensed } from 'next/font/google';
+import localFont from 'next/font/local';
 
-export const barlow = Barlow({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+export const barlow = localFont({
+  src: [
+    { path: './fuentes/Barlow-Regular.ttf', weight: '400', style: 'normal' },
+    { path: './fuentes/Barlow-Medium.ttf', weight: '500', style: 'normal' },
+    { path: './fuentes/Barlow-SemiBold.ttf', weight: '600', style: 'normal' },
+    { path: './fuentes/Barlow-Bold.ttf', weight: '700', style: 'normal' },
+  ],
   variable: '--font-barlow',
   display: 'swap',
 });
 
-export const barlowCondensed = Barlow_Condensed({
-  subsets: ['latin'],
-  weight: ['700'],
+export const barlowCondensed = localFont({
+  src: [
+    { path: './fuentes/BarlowCondensed-Bold.ttf', weight: '700', style: 'normal' },
+  ],
   variable: '--font-barlow-condensed',
   display: 'swap',
 });

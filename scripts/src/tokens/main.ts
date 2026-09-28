@@ -5,10 +5,10 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 
 import { fallar, raiz } from '../proceso.ts';
-import { colorKt, dimensionesKt, shapeKt, themeKt, typeKt } from './android.ts';
+import { colorKt, dimensionesKt, recursoDeFuente, shapeKt, themeKt, typeKt } from './android.ts';
 import { paresAVerificar } from './contraste.ts';
 import { leerTokens } from './leer.ts';
-import { cssDeTokens, fuentesDeNext } from './web.ts';
+import { archivoDeFuenteWeb, cssDeTokens, fuentesDeNext } from './web.ts';
 
 const tokens = leerTokens();
 const web = join(raiz, 'apps', 'web', 'src', 'styles');
@@ -33,6 +33,31 @@ const archivos: Record<string, string> = {
   [join(android, 'Dimensiones.kt')]: dimensionesKt(tokens),
   [join(android, 'Theme.kt')]: themeKt(tokens),
 };
+
+// Los archivos de fuentes no se generan: se verifican los que pide tokens.json.
+const fuentesAndroid = join(
+  raiz,
+  'apps',
+  'android',
+  'core',
+  'designsystem',
+  'src',
+  'main',
+  'res',
+  'font',
+);
+const faltantes = Object.values(tokens.typography.fonts)
+  .flatMap(({ family, weights }) =>
+    weights.flatMap((peso) => [
+      join(web, 'fuentes', archivoDeFuenteWeb(family, peso)),
+      join(fuentesAndroid, `${recursoDeFuente(family, peso)}.ttf`),
+    ]),
+  )
+  .filter((ruta) => !existsSync(ruta))
+  .map((ruta) => relative(raiz, ruta));
+if (faltantes.length > 0) {
+  fallar(`Faltan archivos de fuentes (Google Fonts, licencia OFL):\n${faltantes.join('\n')}`);
+}
 
 const fallas = paresAVerificar(tokens).filter((par) => par.valor < par.minimo);
 for (const par of fallas) {

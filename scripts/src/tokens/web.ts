@@ -80,24 +80,39 @@ export function cssDeTokens(tokens: Tokens): string {
   ].join('\n');
 }
 
+const nombreDeArchivo: Record<number, string> = {
+  400: 'Regular',
+  500: 'Medium',
+  600: 'SemiBold',
+  700: 'Bold',
+};
+
+/** Archivo de la fuente en apps/web/src/styles/fuentes/ (licencia OFL, junto a los archivos). */
+export function archivoDeFuenteWeb(familia: string, peso: number): string {
+  return `${familia.replaceAll(' ', '')}-${nombreDeArchivo[peso] ?? String(peso)}.ttf`;
+}
+
+/** Fuentes locales con next/font: el build no depende de Google Fonts. */
 export function fuentesDeNext(tokens: Tokens): string {
   const { sans, display } = tokens.typography.fonts;
   const declaracion = (familia: string, pesos: number[]): string => {
-    const nombre = familia.replaceAll(' ', '_');
     const constante = familia.replaceAll(' ', '').replace(/^./, (c) => c.toLowerCase());
     return [
-      `export const ${constante} = ${nombre}({`,
-      "  subsets: ['latin'],",
-      `  weight: [${pesos.map((p) => `'${String(p)}'`).join(', ')}],`,
+      `export const ${constante} = localFont({`,
+      '  src: [',
+      ...pesos.map(
+        (p) =>
+          `    { path: './fuentes/${archivoDeFuenteWeb(familia, p)}', weight: '${String(p)}', style: 'normal' },`,
+      ),
+      '  ],',
       `  variable: '${variableDeFuente(familia)}',`,
       "  display: 'swap',",
       '});',
     ].join('\n');
   };
-  const importadas = [sans.family, display.family].map((f) => f.replaceAll(' ', '_')).sort();
   return [
     `// ${encabezado}`,
-    `import { ${importadas.join(', ')} } from 'next/font/google';`,
+    "import localFont from 'next/font/local';",
     '',
     declaracion(sans.family, sans.weights),
     '',

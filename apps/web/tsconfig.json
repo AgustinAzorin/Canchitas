@@ -1,0 +1,18 @@
+{
+  "extends": "@canchitas/tsconfig/nextjs.json",
+  "compilerOptions": {
+    "paths": { "@/*": ["./src/*"] }
+  },
+  "include": [
+    "next-env.d.ts",
+    "src",
+    "e2e",
+    ".storybook/*.ts",
+    ".storybook/*.tsx",
+    ".next/types/**/*.ts",
+    "*.config.ts",
+    "*.config.mjs",
+    "eslint.config.js"
+  ],
+  "exclude": ["node_modules"]
+}

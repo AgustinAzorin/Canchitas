@@ -1,0 +1,15 @@
+# Dev: un solo origen (http://localhost:8080) para la web y la API, como en producción.
+# La web llama a /v1/… sin CORS y las cookies de sesión quedan en el mismo sitio (ADR 0009).
+{
+	auto_https off
+	admin off
+}
+
+:8080 {
+	handle /v1/* {
+		reverse_proxy {$API_UPSTREAM}
+	}
+	handle {
+		reverse_proxy {$WEB_UPSTREAM}
+	}
+}
