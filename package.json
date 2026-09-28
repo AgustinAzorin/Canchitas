@@ -21,7 +21,9 @@
     "db:test": "node scripts/src/db.ts test",
     "db:lint": "node scripts/src/db.ts lint",
     "db:reset": "node scripts/src/db.ts reset",
-    "db:new": "node scripts/src/db.ts new"
+    "db:new": "node scripts/src/db.ts new",
+    "tokens": "node scripts/src/tokens/main.ts",
+    "tokens:check": "node scripts/src/tokens/main.ts --check"
   },
   "devDependencies": {
     "@commitlint/cli": "21.2.3",

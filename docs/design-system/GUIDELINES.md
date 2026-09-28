@@ -379,7 +379,7 @@ Set mínimo para el MVP del SRS. Los componentes base se apoyan en Material 3 en
 
 ## Accesibilidad
 
-- **Contraste:** `contrast_check.py` pasa todos los pares obligatorios en claro y oscuro, más los extra de `contrastPairs`: `primary`, `input`, `ring`, `destructive` y `success` contra fondos, y `team-dark-border` y `team-light` vs `team-dark`. `border` es decorativo y no delimita controles.
+- **Contraste:** `pnpm tokens:check` pasa todos los pares obligatorios en claro y oscuro, más los extra de `contrastPairs`: `primary`, `input`, `ring`, `destructive` y `success` contra fondos, y `team-dark-border` y `team-light` vs `team-dark`. `border` es decorativo y no delimita controles.
 - **Objetivos táctiles:** 48×48 dp en Android y 44×44 px mínimo en web (se usa 48). Los botones `sm` extienden el área con padding invisible.
 - **Foco:** siempre visible, con anillo `ring` de 2 px y offset 2. Nunca `outline: none` sin reemplazo.
 - **Color como único canal:** prohibido. Estados con texto, errores con ícono y texto, equipos con nombre además del chip.
@@ -400,8 +400,8 @@ Tono: directo, voseo rioplatense, sin exclamaciones ni emojis en la interfaz.
 
 ## Mantenimiento
 
-- **Fuente de verdad:** `tokens.json`. Para cambiar un valor se edita el token y se corre `scripts/contrast_check.py tokens.json` (sin FAIL) y luego `scripts/export_tokens.py tokens.json --out build/`. Los archivos de `build/` no se editan a mano.
-- **Exportador propio:** `scripts/export_tokens.py` es una copia extendida del de la skill. Los roles propios de `semantic` (como `team-*`) se exportan también a `ExtendedColors` en Compose.
+- **Fuente de verdad:** `tokens.json`. Para cambiar un valor se edita el token y se corre `pnpm tokens`, que verifica el contraste AA y regenera `apps/web/src/styles/*.generated.*` y `apps/android/core/designsystem/src/generated/`. Esos archivos no se editan a mano; CI corre `pnpm tokens:check`.
+- **Exportador propio:** `scripts/src/tokens/`. Los roles propios de `semantic` que Material 3 no tiene (`success`, `warning`, `info`, `accent`, `ring`, `team-*`) se exportan a `ExtendedColors` en Compose (`CanchitasTheme.extendedColors`).
 - **Artifact:** `scripts/build_artifact.py <carpeta>` regenera los archivos del design system publicado a partir de `tokens.json` y de las secciones de componentes de este documento. Si se agrega un componente acá sin su preview, el script falla.
 - **Versionado:** semver. Es versión mayor si se renombra o elimina un token, menor si se agrega un token o un componente, y patch si se ajusta un valor.
 - **Componente nuevo:** antes de crearlo, verificar que no se resuelve componiendo los existentes. Si hace falta, se documenta acá con el mismo formato (cuándo, anatomía, estados, tokens, web/Android, do/don't) y se agrega al artifact.
