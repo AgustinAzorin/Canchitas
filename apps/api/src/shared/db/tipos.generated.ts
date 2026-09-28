@@ -3,34 +3,32 @@
  * Please do not edit it manually.
  */
 
-import type { ColumnType } from 'kysely';
-import type { IPostgresInterval } from 'postgres-interval';
+import type { ColumnType } from "kysely";
+import type { IPostgresInterval } from "postgres-interval";
 
-export type ArrayType<T> = ArrayTypeImpl<T> extends (infer U)[] ? U[] : ArrayTypeImpl<T>;
+export type ArrayType<T> = ArrayTypeImpl<T> extends (infer U)[]
+  ? U[]
+  : ArrayTypeImpl<T>;
 
-export type ArrayTypeImpl<T> =
-  T extends ColumnType<infer S, infer I, infer U> ? ColumnType<S[], I[], U[]> : T[];
+export type ArrayTypeImpl<T> = T extends ColumnType<infer S, infer I, infer U>
+  ? ColumnType<S[], I[], U[]>
+  : T[];
 
-export type EstadoCancha = 'baja' | 'pendiente' | 'publicada' | 'rechazada';
+export type EstadoCancha = "baja" | "pendiente" | "publicada" | "rechazada";
 
-export type EstadoCuenta = 'activa' | 'sin_verificar';
+export type EstadoCuenta = "activa" | "sin_verificar";
 
-export type EstadoParticipacion = 'baja' | 'confirmado' | 'en_espera';
+export type EstadoParticipacion = "baja" | "confirmado" | "en_espera";
 
-export type EstadoSolicitud = 'aprobada' | 'pendiente' | 'rechazada';
+export type EstadoSolicitud = "aprobada" | "pendiente" | "rechazada";
 
-export type Generated<T> =
-  T extends ColumnType<infer S, infer I, infer U>
-    ? ColumnType<S, I | undefined, U>
-    : ColumnType<T, T | undefined, T>;
+export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
+  ? ColumnType<S, I | undefined, U>
+  : ColumnType<T, T | undefined, T>;
 
 export type Int8 = ColumnType<string, bigint | number | string, bigint | number | string>;
 
-export type Interval = ColumnType<
-  IPostgresInterval,
-  IPostgresInterval | number | string,
-  IPostgresInterval | number | string
->;
+export type Interval = ColumnType<IPostgresInterval, IPostgresInterval | number | string, IPostgresInterval | number | string>;
 
 export type Json = JsonValue;
 
@@ -44,55 +42,35 @@ export type JsonPrimitive = boolean | number | string | null;
 
 export type JsonValue = JsonArray | JsonObject | JsonPrimitive;
 
-export type LadoEquipo = 'A' | 'B';
+export type LadoEquipo = "A" | "B";
 
-export type Modalidad = 'f11' | 'f5' | 'f7' | 'f8';
+export type Modalidad = "f11" | "f5" | "f7" | "f8";
 
-export type MotivoSalida = 'expulsado' | 'salio';
+export type MotivoSalida = "expulsado" | "salio";
 
 export type Numeric = ColumnType<string, number | string, number | string>;
 
-export type Plataforma = 'android' | 'web';
+export type Plataforma = "android" | "web";
 
-export type QuienCalifica = 'grupos' | 'jugaron';
+export type QuienCalifica = "grupos" | "jugaron";
 
-export type RespuestaOferta = 'aceptada' | 'rechazada' | 'vencida';
+export type RespuestaOferta = "aceptada" | "rechazada" | "vencida";
 
-export type RolGrupo = 'admin' | 'jugador';
+export type RolGrupo = "admin" | "jugador";
 
-export type Superficie = 'cemento' | 'natural' | 'sintetico';
+export type Superficie = "cemento" | "natural" | "sintetico";
 
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
-export type TipoContacto = 'llamada' | 'whatsapp';
+export type TipoContacto = "llamada" | "whatsapp";
 
-export type TipoContenido = 'cancha' | 'nota' | 'resena';
+export type TipoContenido = "cancha" | "nota" | "resena";
 
-export type TipoNotificacion =
-  | 'agregado_a_grupo'
-  | 'aval_rechazado'
-  | 'baja_jugador'
-  | 'calificacion_recibida'
-  | 'cancha_aprobada'
-  | 'cancha_rechazada'
-  | 'confirmacion_abierta'
-  | 'deuda_pendiente'
-  | 'figura_abierta'
-  | 'figura_elegida'
-  | 'lugar_liberado'
-  | 'nota_recibida'
-  | 'partido_confirmado'
-  | 'reclamo_aprobado'
-  | 'reclamo_rechazado'
-  | 'recordatorio_24h'
-  | 'recordatorio_2h'
-  | 'resultado_cargado'
-  | 'votacion_cerrada'
-  | 'votacion_nueva';
+export type TipoNotificacion = "agregado_a_grupo" | "aval_rechazado" | "baja_jugador" | "calificacion_recibida" | "cancha_aprobada" | "cancha_rechazada" | "confirmacion_abierta" | "deuda_pendiente" | "figura_abierta" | "figura_elegida" | "lugar_liberado" | "nota_recibida" | "partido_confirmado" | "reclamo_aprobado" | "reclamo_rechazado" | "recordatorio_24h" | "recordatorio_2h" | "resultado_cargado" | "votacion_cerrada" | "votacion_nueva";
 
-export type TipoVotacion = 'cancha' | 'horario';
+export type TipoVotacion = "cancha" | "horario";
 
-export type VisibilidadPerfil = 'grupos' | 'solo_yo' | 'todos';
+export type VisibilidadPerfil = "grupos" | "solo_yo" | "todos";
 
 export interface Auditoria {
   accion: string;

@@ -2,6 +2,7 @@
 import comments from '@eslint-community/eslint-plugin-eslint-comments/configs';
 import js from '@eslint/js';
 import prettier from 'eslint-config-prettier';
+import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 /**
@@ -39,6 +40,11 @@ export function base({ tsconfigRootDir }) {
     {
       files: ['**/*.js', '**/*.mjs', '**/*.cjs'],
       extends: [tseslint.configs.disableTypeChecked],
+    },
+    {
+      // Archivos de configuración en CommonJS (por ejemplo, dependency-cruiser).
+      files: ['**/*.cjs'],
+      languageOptions: { sourceType: 'commonjs', globals: { ...globals.node } },
     },
     prettier,
   );
