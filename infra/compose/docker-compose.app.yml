@@ -1,0 +1,45 @@
+# Se suma a docker-compose.yml para correr api, worker y web en contenedores (`pnpm dev:docker`),
+# con las mismas imágenes que staging y prod (ADR 0013).
+services:
+  api:
+    build:
+      context: ../..
+      dockerfile: apps/api/Dockerfile
+    image: canchitas-api:dev
+    environment:
+      DATABASE_URL: postgres://canchitas_api:canchitas_api@postgres:5432/canchitas
+      PORT: '3001'
+      APP_VERSION: dev-docker
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'node', '-e', "fetch('http://127.0.0.1:3001/v1/salud').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  worker:
+    image: canchitas-api:dev
+    command: ['node', 'dist/main-worker.js']
+    environment:
+      DATABASE_URL: postgres://canchitas_worker:canchitas_worker@postgres:5432/canchitas
+    depends_on:
+      api:
+        condition: service_started
+
+  web:
+    build:
+      context: ../..
+      dockerfile: apps/web/Dockerfile
+    image: canchitas-web:dev
+    depends_on:
+      - api
+
+  caddy:
+    environment:
+      API_UPSTREAM: api:3001
+      WEB_UPSTREAM: web:3000
+    depends_on:
+      - api
+      - web

@@ -1,0 +1,15 @@
+**/node_modules
+**/.next
+**/dist
+**/.turbo
+**/coverage
+**/storybook-static
+**/playwright-report
+**/test-results
+.git
+apps/android
+docs
+db
+infra
+**/*.env
+!apps/api/dev.env

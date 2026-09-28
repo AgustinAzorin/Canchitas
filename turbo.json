@@ -1,10 +1,12 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "ui": "stream",
+  "agentGuidance": false,
   "tasks": {
     "generate": {
       "dependsOn": ["^generate"],
-      "outputs": []
+      "outputs": [],
+      "cache": false
     },
     "build": {
       "dependsOn": ["^build", "generate"],
@@ -21,6 +23,15 @@
       "outputs": ["coverage/**"]
     },
     "dev": {
+      "dependsOn": ["^build", "generate"],
+      "cache": false,
+      "persistent": true
+    },
+    "@canchitas/web#generate": {
+      "dependsOn": ["@canchitas/api#generate", "@canchitas/scripts#generate"],
+      "outputs": []
+    },
+    "dev:worker": {
       "dependsOn": ["^build", "generate"],
       "cache": false,
       "persistent": true
