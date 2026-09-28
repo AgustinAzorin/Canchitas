@@ -1,0 +1,8 @@
+# Configuración de squawk (linter de migraciones). Ver docs/adr/0005.
+# dbmate corre cada migración en una transacción: no hace falta IF NOT EXISTS.
+assume_in_transaction = true
+excluded_rules = [
+  "prefer-robust-stmts",         # migraciones transaccionales
+  "prefer-bigint-over-int",      # las PK son uuid o bigint identity; los int acotados tienen CHECK
+  "prefer-bigint-over-smallint", # goles, puntajes y atributos 1–10, acotados por CHECK
+]
