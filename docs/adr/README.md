@@ -21,3 +21,4 @@ Cada decisión que afecta a más de un archivo se registra acá (ADR 0001). Plan
 | [0015](0015-observabilidad-y-seguridad.md) | Observabilidad y seguridad de la cadena de suministro | Aceptada |
 | [0016](0016-invitados-verificados.md) | Invitados identificados por mail verificado | Propuesta — requiere actualizar RF-110 en el SRS |
 | [0017](0017-design-tokens.md) | Design tokens como fuente única | Aceptada |
+| [0018](0018-dueno-del-esquema.md) | El migrador es dueño del esquema y toda migración corre con su rol | Propuesta |

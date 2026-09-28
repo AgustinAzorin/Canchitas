@@ -49,4 +49,52 @@ docs/           SRS, ADRs, modelo de datos, design system, hoja de ruta
 
 ## Comandos
 
-Se completan en el hito M0, cuando exista el tooling. Todo comando del repo se corre desde la raíz con `pnpm` (o `./gradlew` dentro de `apps/android`).
+Todo se corre desde la raíz con `pnpm` (Node 24.21.0 y pnpm 12.6.0, ver `.nvmrc` y `packageManager`), salvo Android, que usa `./gradlew` dentro de `apps/android` (JDK 21 y Android SDK 37). Hace falta Docker.
+
+**Levantar todo en local** (web y API en http://localhost:8080, detrás de Caddy como en producción):
+
+| Comando | Qué hace |
+|---|---|
+| `pnpm install` | Dependencias y hook de commitlint. |
+| `pnpm dev` | Postgres en Docker, migraciones, Caddy, y API, worker y web con recarga en caliente. |
+| `pnpm dev:docker` | Lo mismo, pero API, worker y web en contenedores con las imágenes de producción. `pnpm dev:stop` los frena. |
+
+**Calidad** (lo que corre CI):
+
+| Comando | Qué hace |
+|---|---|
+| `pnpm lint` | ESLint en todo el TypeScript y dependency-cruiser en la API (capas del ADR 0004). |
+| `pnpm typecheck` | Tipos de todos los paquetes. |
+| `pnpm test` | Tests de la API: unitarios y de integración con Testcontainers. `pnpm --filter @canchitas/api test:unit` corre solo los unitarios. |
+| `pnpm format` / `pnpm format:check` | Prettier. |
+
+**Generados** (no se editan a mano; CI falla si están desactualizados):
+
+| Comando | Qué regenera |
+|---|---|
+| `pnpm generate` | `contract/openapi.json` desde las rutas de la API, el cliente de la web y los tokens. |
+| `pnpm tokens` / `pnpm tokens:check` | CSS y fuentes de la web y el tema de Compose desde `docs/design-system/tokens.json`, con verificación de contraste AA. |
+| `pnpm --filter @canchitas/api db:types` | Tipos de Kysely desde la base de dev (`db:types:check` los verifica). |
+
+**Base de datos** (dbmate, pg_prove y pg_dump corren dentro del contenedor; ver `db/CLAUDE.md`):
+
+| Comando | Qué hace |
+|---|---|
+| `pnpm db:up` | Levanta Postgres 16 + PostGIS + pgTAP en el puerto 5433. |
+| `pnpm db:migrate` / `pnpm db:rollback` | Aplica o deshace migraciones en `canchitas` (y regenera `db/schema.sql`) y en `canchitas_test`. |
+| `pnpm db:new <nombre>` | Crea una migración con el encabezado obligatorio. |
+| `pnpm db:test` | Tests pgTAP. |
+| `pnpm db:lint` | squawk y la convención de `SET LOCAL ROLE`. |
+| `pnpm db:reset` | Borra el Postgres de dev con sus datos. |
+
+**Web** (`pnpm --filter @canchitas/web <comando>`): `dev`, `build`, `storybook`, `build-storybook`, `test:visual` (una captura y axe por story; necesita `build-storybook`) y `e2e` (Playwright con axe contra el stack de `pnpm dev`).
+
+**Android** (dentro de `apps/android`):
+
+| Comando | Qué hace |
+|---|---|
+| `./gradlew assembleDebug` | APK de debug; apunta a `http://10.0.2.2:8080/` (la PC vista desde el emulador). Con un teléfono: `-Pcanchitas.apiUrl=http://<ip-de-la-pc>:8080/`. |
+| `./gradlew ktlintCheck detekt lint` | Estilo, análisis estático y Android Lint (advertencias como errores). `ktlintFormat` corrige el formato. |
+| `./gradlew testDebugUnitTest` | Tests de JVM y Robolectric. Con `CANCHITAS_API_URL=http://localhost:8080/` también corre la app contra la API local. |
+| `./gradlew recordRoborazziDebug` / `verifyRoborazziDebug` | Graba o verifica los screenshots de Roborazzi. |
+| `./gradlew assembleRelease` | Build de release con R8. |

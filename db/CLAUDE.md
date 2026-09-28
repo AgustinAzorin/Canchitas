@@ -20,7 +20,7 @@ schema.sql      foto del esquema generada por dbmate; se commitea, no se edita
   SET LOCAL statement_timeout = '60s';
   SET LOCAL ROLE canchitas_migrator;
   ```
-  El `SET LOCAL ROLE` es obligatorio desde la migración de roles (`20260928215000_roles.sql`): así todo objeto nuevo es de `canchitas_migrator` y hereda los permisos de la API, el worker y readonly, aunque dbmate se conecte como superusuario. `pnpm db:lint` lo verifica.
+  El `SET LOCAL ROLE` es obligatorio desde la migración de roles (`20260928215000_roles.sql`): así todo objeto nuevo es de `canchitas_migrator` y hereda los permisos de la API, el worker y readonly, aunque dbmate se conecte como superusuario. `pnpm db:lint` lo verifica (ADR 0018).
 - **Roles (ADR 0005):** `canchitas_migrator` es dueño del esquema y el único que hace DDL; `canchitas_api` y `canchitas_worker` leen y escriben datos; `canchitas_readonly` solo lee. La migración de roles y su `down` los corre un superusuario. En dev la contraseña de cada rol es su nombre.
 - **Migraciones seguras sobre tablas con datos:**
   - índices con `CREATE INDEX CONCURRENTLY`, en una migración aparte y con `-- migrate:up transaction:false`;

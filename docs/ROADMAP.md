@@ -14,16 +14,22 @@ Orden de construcción de Canchitas. Cada hito se trabaja en una o más ramas y 
 
 Sin funcionalidades. El repo queda listo para construir.
 
-- [ ] Monorepo: pnpm workspaces, Turborepo, `packages/tsconfig` y `packages/eslint-config` (strict-type-checked), Prettier, `.editorconfig`.
-- [ ] `apps/api`: Fastify + zod + OpenAPI; `GET /v1/salud`; Kysely con tipos generados de la base; logger pino; raíz de composición; `Result` y `problem+json` en `shared/`; dependency-cruiser con las reglas de capas del ADR 0004.
-- [ ] `apps/web`: Next.js + Tailwind v4 + shadcn/ui; tokens exportados desde `docs/design-system/tokens.json`; Storybook; Playwright; cliente generado del contrato; página que muestra `/v1/salud`.
-- [ ] `apps/android`: estructura de Now in Android (build-logic, version catalog, módulos `core:*`); `core:designsystem` desde los tokens; cliente generado; pantalla que muestra `/v1/salud`; detekt, ktlint, Roborazzi.
-- [ ] `db`: roles `canchitas_migrator`, `canchitas_api`, `canchitas_worker`, `canchitas_readonly` en una migración nueva.
-- [ ] `infra`: `docker-compose.yml` para dev (Postgres con PostGIS y pgTAP, API, worker, web); Caddy; esqueleto de OpenTofu; SOPS + age.
-- [ ] CI en GitHub Actions: lint, tipos, tests (Vitest, pgTAP, Android), squawk, contrato al día, oasdiff, dependency-cruiser, gitleaks, CodeQL, commitlint. Renovate configurado.
-- [ ] `CLAUDE.md` raíz: sección **Comandos** completa.
+- [x] Monorepo: pnpm workspaces, Turborepo, `packages/tsconfig` y `packages/eslint-config` (strict-type-checked), Prettier, `.editorconfig`.
+- [x] `apps/api`: Fastify + zod + OpenAPI; `GET /v1/salud`; Kysely con tipos generados de la base; logger pino; raíz de composición; `Result` y `problem+json` en `shared/`; dependency-cruiser con las reglas de capas del ADR 0004.
+- [x] `apps/web`: Next.js + Tailwind v4 + shadcn/ui; tokens exportados desde `docs/design-system/tokens.json`; Storybook; Playwright; cliente generado del contrato; página que muestra `/v1/salud`.
+- [x] `apps/android`: estructura de Now in Android (build-logic, version catalog, módulos `core:*`); `core:designsystem` desde los tokens; cliente generado; pantalla que muestra `/v1/salud`; detekt, ktlint, Roborazzi.
+  - Pendiente: reglas de Compose en detekt (ADR 0011). La versión de compose-rules compatible con Kotlin 2.4 exige detekt 2.0, que todavía es alpha.
+  - `core:database` y `core:ui` se crean cuando haya datos que guardar y componentes compartidos (M1).
+- [x] `db`: roles `canchitas_migrator`, `canchitas_api`, `canchitas_worker`, `canchitas_readonly` en una migración nueva.
+- [x] `infra`: `docker-compose.yml` para dev (Postgres con PostGIS y pgTAP, API, worker, web); Caddy; esqueleto de OpenTofu; SOPS + age.
+  - `.sops.yaml` sin claves: la clave pública age y el proveedor del VPS se definen en M1, con el deploy a staging.
+- [x] CI en GitHub Actions: lint, tipos, tests (Vitest, pgTAP, Android), squawk, contrato al día, oasdiff, dependency-cruiser, gitleaks, CodeQL, commitlint. Renovate configurado.
+  - Pendiente: la primera corrida en GitHub. Los pasos se corrieron en local; los snapshots visuales de la web se grabaron con otra versión de Chromium y pueden necesitar regrabarse en CI.
+- [x] `CLAUDE.md` raíz: sección **Comandos** completa.
 
 **Hecho cuando:** `pnpm dev` levanta todo local; la web y la app muestran el estado de la API; CI en verde.
+
+**Estado:** `pnpm dev` levanta todo y la web muestra `/v1/salud` (Playwright). La app lo muestra en Robolectric contra la API local (`SaludContraApiLocalTest`); falta probarla en un emulador o un teléfono. Falta CI en verde en el PR.
 
 ## M1 — Esqueleto de punta a punta: cuentas y grupos
 
