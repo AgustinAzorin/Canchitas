@@ -1,0 +1,18 @@
+# Se suma a la configuración por defecto de detekt (buildUponDefaultConfig).
+naming:
+  FunctionNaming:
+    # Los Composables empiezan con mayúscula.
+    ignoreAnnotated: ['Composable']
+  # Nombres del dominio en español sin tildes (ADR 0002): no hay reglas extra.
+style:
+  MagicNumber:
+    ignorePropertyDeclaration: true
+    ignoreCompanionObjectPropertyDeclaration: true
+    ignoreAnnotation: true
+    excludes: ['**/test/**', '**/*Test.kt']
+  UnusedPrivateMember:
+    ignoreAnnotated: ['Preview']
+complexity:
+  LongParameterList:
+    ignoreDefaultParameters: true
+    ignoreAnnotated: ['Composable']

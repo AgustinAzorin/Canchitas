@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Círculo con signo de exclamación, al estilo de Material Symbols Rounded (GUIDELINES). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FF000000"
+        android:fillType="evenOdd"
+        android:pathData="M12,2A10,10 0,1 0,12 22A10,10 0,1 0,12 2ZM12,4A8,8 0,1 1,12 20A8,8 0,1 1,12 4Z" />
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M12,7C12.55,7 13,7.45 13,8V12C13,12.55 12.55,13 12,13C11.45,13 11,12.55 11,12V8C11,7.45 11.45,7 12,7ZM12,15C12.55,15 13,15.45 13,16C13,16.55 12.55,17 12,17C11.45,17 11,16.55 11,16C11,15.45 11.45,15 12,15Z" />
+</vector>
