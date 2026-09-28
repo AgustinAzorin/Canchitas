@@ -1,8 +1,3 @@
-\restrict dbmate
-
--- Dumped from database version 16.13 (Ubuntu 16.13-0ubuntu0.24.04.1)
--- Dumped by pg_dump version 16.13 (Ubuntu 16.13-0ubuntu0.24.04.1)
-
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
@@ -2817,8 +2812,6 @@ ALTER TABLE ONLY public.voto
 -- PostgreSQL database dump complete
 --
 
-\unrestrict dbmate
-
 
 --
 -- Dbmate schema migrations
@@ -2832,4 +2825,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20260928120005'),
     ('20260928120006'),
     ('20260928120007'),
-    ('20260928120008');
+    ('20260928120008'),
+    ('20260928215000');

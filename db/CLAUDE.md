@@ -12,13 +12,16 @@ schema.sql      foto del esquema generada por dbmate; se commitea, no se edita
 
 ## Reglas
 
-- **Una migración aplicada no se edita nunca.** Todo cambio es una migración nueva: `dbmate new <nombre_en_snake_case>`.
+- **Una migración aplicada no se edita nunca.** Todo cambio es una migración nueva: `pnpm db:new <nombre_en_snake_case>` (crea el archivo con el encabezado de abajo).
 - **Toda migración tiene `down`** que deja la base exactamente como estaba.
 - **Primeras líneas de cada sección:**
   ```sql
   SET LOCAL lock_timeout = '5s';
   SET LOCAL statement_timeout = '60s';
+  SET LOCAL ROLE canchitas_migrator;
   ```
+  El `SET LOCAL ROLE` es obligatorio desde la migración de roles (`20260928215000_roles.sql`): así todo objeto nuevo es de `canchitas_migrator` y hereda los permisos de la API, el worker y readonly, aunque dbmate se conecte como superusuario. `pnpm db:lint` lo verifica.
+- **Roles (ADR 0005):** `canchitas_migrator` es dueño del esquema y el único que hace DDL; `canchitas_api` y `canchitas_worker` leen y escriben datos; `canchitas_readonly` solo lee. La migración de roles y su `down` los corre un superusuario. En dev la contraseña de cada rol es su nombre.
 - **Migraciones seguras sobre tablas con datos:**
   - índices con `CREATE INDEX CONCURRENTLY`, en una migración aparte y con `-- migrate:up transaction:false`;
   - FKs y CHECKs nuevos como `NOT VALID` y después `VALIDATE CONSTRAINT`;
@@ -32,7 +35,9 @@ schema.sql      foto del esquema generada por dbmate; se commitea, no se edita
 
 ## Después de cada migración
 
-1. `dbmate up` y `dbmate rollback` y `dbmate up`: tiene que ir y volver.
-2. Tests: `pg_prove -d <base_de_test> db/tests/*.sql`.
-3. `squawk db/migrations/<nueva>.sql`.
-4. Regenerar los tipos de Kysely de `apps/api` y commitear `db/schema.sql` actualizado.
+dbmate, pg_dump y pg_prove corren dentro del contenedor de Postgres de `infra/compose`, para que `schema.sql` salga siempre igual.
+
+1. `pnpm db:migrate`, `pnpm db:rollback` y `pnpm db:migrate`: tiene que ir y volver. Aplica en `canchitas` (y regenera `schema.sql`) y en `canchitas_test`.
+2. Tests: `pnpm db:test`.
+3. `pnpm db:lint` (squawk y la convención de rol).
+4. Regenerar los tipos de Kysely (`pnpm --filter @canchitas/api db:types`) y commitear `db/schema.sql` actualizado.

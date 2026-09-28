@@ -28,7 +28,10 @@ export function base({ tsconfigRootDir }) {
         '@typescript-eslint/no-non-null-assertion': 'error',
         '@typescript-eslint/no-explicit-any': 'error',
         '@typescript-eslint/consistent-type-imports': 'error',
-        '@typescript-eslint/switch-exhaustiveness-check': 'error',
+        '@typescript-eslint/switch-exhaustiveness-check': [
+          'error',
+          { considerDefaultExhaustiveForUnions: true },
+        ],
         'no-console': 'error',
         eqeqeq: 'error',
       },
