@@ -8,7 +8,12 @@ import { correr, fallar, raiz } from './proceso.ts';
 
 const compose = ['compose', '-f', 'infra/compose/docker-compose.yml'];
 const bases = { app: 'canchitas', test: 'canchitas_test' } as const;
-const rolesDeLaApp = ['canchitas_migrator', 'canchitas_api', 'canchitas_worker', 'canchitas_readonly'];
+const rolesDeLaApp = [
+  'canchitas_migrator',
+  'canchitas_api',
+  'canchitas_worker',
+  'canchitas_readonly',
+];
 
 /** Primera migración que ya encuentra los roles: desde acá todas hacen SET LOCAL ROLE. */
 const migracionDeRoles = '20260928215000';
@@ -70,7 +75,11 @@ function lint(): void {
       `Estas migraciones no empiezan up y down con SET LOCAL ROLE canchitas_migrator:\n${sinRol.join('\n')}`,
     );
   }
-  correr('pnpm', ['exec', 'squawk', ...archivos.map((archivo) => join('db', 'migrations', archivo))]);
+  correr('pnpm', [
+    'exec',
+    'squawk',
+    ...archivos.map((archivo) => join('db', 'migrations', archivo)),
+  ]);
 }
 
 const [comando, argumento] = process.argv.slice(2);

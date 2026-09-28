@@ -6,7 +6,10 @@ packages:
 
 # Paquetes autorizados a correr scripts de instalación.
 allowBuilds:
+  cpu-features: false
   lefthook: true
+  protobufjs: false
+  ssh2: false
 
 # pnpm no instala versiones con menos de un día de publicadas; estas se fijaron
 # como última estable el día que se agregaron.
@@ -29,6 +32,7 @@ minimumReleaseAgeExclude:
   - '@typescript-eslint/visitor-keys@8.71.0'
   - turbo@2.11.5
   - typescript-eslint@8.71.0
+  - testcontainers@12.2.0
 
 # Versiones exactas: toda dependencia nueva se fija sin ^ ni ~.
 saveExact: true
