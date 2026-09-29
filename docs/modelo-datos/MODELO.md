@@ -17,6 +17,9 @@ pg_prove -d canchitas_test db/tests/*.sql  # corre los tests
 | `…_social_moderacion` | `resena`, `calificacion`, `nota`, `denuncia`, `solicitud_historial`, `fusionar_invitado()` |
 | `…_notificaciones_auditoria` | `notificacion`, `dispositivo`, `outbox`, `auditoria`, `metrica_diaria`, `borrar_cuenta()` |
 | `…_vistas` | Todo lo derivado: estado del partido, estadísticas, figura, avales, deuda, radar, directorio |
+| `…_vista_grupo` | `v_grupo`: el grupo como lo leen los clientes, con la cantidad de miembros vigentes (RF-010 a RF-012, RN-27) |
+
+La fila de `jugador` de un usuario la crea la API la primera vez que entra a un grupo (al crearlo o al unirse por link). El link de invitación es `grupo.link_token`: regenerarlo lo reemplaza, así que el anterior deja de encontrar el grupo (RF-012). Quien sale vuelve a la misma fila de `miembro` como jugador; el expulsado no vuelve por link (RN-28).
 
 ## Diagrama
 

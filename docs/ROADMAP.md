@@ -39,8 +39,16 @@ Sin funcionalidades. El repo queda listo para construir.
   - RF-004, segundo criterio (no unirse a un grupo sin verificar): se prueba con RF-011.
   - Los enlaces de los mails abren la web también desde Android; los App Links llegan con RF-011.
   - Pendiente: `Idempotency-Key` (ADR 0007) y rate limiting por IP (ADR 0015) en los endpoints de cuentas.
-- [ ] RF-010, RF-011, RF-012 (crear grupo, unirse por link, regenerar link), con App Links en Android.
-- [ ] Módulo de políticas de autorización con su matriz de tests (RN-07, RNF-013).
+- [x] RF-010, RF-011, RF-012 (crear grupo, unirse por link, regenerar link), con App Links en Android (PR `feat/m1-grupos`).
+  - Decisiones nuevas en el SRS (v1.1), a aprobar con el PR: RN-26 (solo los admins ven el link), RN-27 (la vista previa del link solo con sesión) y RN-28 (el que salió vuelve por link; el expulsado no).
+  - Sin sesión, el link lleva a iniciar sesión o registrarse y vuelve a él: en la web por `?invitacion=` en la URL; en Android, el link queda pendiente hasta que hay sesión.
+  - Android: `core:database` con Room 3 (lectura sin conexión de los grupos, RNF-022) y `core:ui` con los componentes compartidos.
+  - App Links: el dominio es la propiedad de Gradle `canchitas.dominioDeLinks` (por defecto `canchitas.app`) y la web sirve `/.well-known/assetlinks.json` con `ANDROID_PAQUETE` y `ANDROID_HUELLAS_SHA256`. En dev y CI, la huella del keystore de debug del repo (`apps/android/app/debug.keystore`).
+  - Pendiente, con el deploy a staging: configurar `ANDROID_HUELLAS_SHA256` con la huella de la firma de release (o de Play App Signing), compilar con `-Pcanchitas.dominioDeLinks=<dominio de staging>` y verificar los App Links en un dispositivo (`adb shell pm get-app-links com.canchitas.app`). La huella de debug nunca va a staging ni a prod.
+  - Pendiente: `Idempotency-Key` (ADR 0007) en `POST /v1/grupos`, junto con el de cuentas.
+- [x] Módulo de políticas de autorización con su matriz de tests (RN-07, RNF-013) (PR `feat/m1-grupos`).
+  - `apps/api/src/modules/grupos/domain/politicas.ts`: roles `cuenta_sin_verificar`, `no_miembro`, `ex_miembro`, `expulsado`, `jugador`, `admin` × acciones de RF-010 a RF-012, RN-07 y RN-26 a RN-28, con un test por celda.
+  - Las acciones de RF-013 a RF-018 (y el rol de creador de RF-018) se suman a la matriz en M2, con sus endpoints.
 - [ ] Deploy a staging en el VPS; backup diario a R2 y restore de prueba.
 
 **Hecho cuando:** alguien se registra en Android, crea un grupo, comparte el link, otra persona se une desde la web, y todo corre en staging.
