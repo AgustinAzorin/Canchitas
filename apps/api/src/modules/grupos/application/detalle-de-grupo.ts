@@ -7,7 +7,7 @@ import type { DatosDeGrupo } from './puertos.ts';
 /** Acciones sobre un grupo que se ofrecen en pantalla; crear, unirse y verlo no son botones del grupo. */
 export type AccionSobreElGrupo = Exclude<
   Accion,
-  'crear_grupo' | 'ver_invitacion' | 'unirse_por_link' | 'ver_grupo'
+  'listar_mis_grupos' | 'crear_grupo' | 'ver_invitacion' | 'unirse_por_link' | 'ver_grupo'
 >;
 
 const accionesSobreElGrupo: ReadonlySet<Accion> = new Set<AccionSobreElGrupo>([

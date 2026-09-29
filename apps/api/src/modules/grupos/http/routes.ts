@@ -151,7 +151,11 @@ export function rutasDeGrupos(
         if (actor === null) {
           return reply;
         }
-        return { grupos: [...(await casos.listarMisGrupos(actor))] };
+        const resultado = await casos.listarMisGrupos(actor);
+        if (resultado.isErr()) {
+          return enviarProblema(request, reply, problemaDeRechazo(resultado.error));
+        }
+        return { grupos: [...resultado.value] };
       },
     );
 

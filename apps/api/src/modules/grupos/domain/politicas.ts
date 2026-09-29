@@ -4,7 +4,8 @@
 // en test/grupos/politicas.test.ts.
 //
 // De dónde sale cada fila:
-// - RF-010: crear un grupo requiere una cuenta activa.
+// - RF-010: crear un grupo requiere una cuenta activa. Ver los grupos propios, cualquier sesión:
+//   la consulta ya filtra por membresía vigente.
 // - RF-011, RF-004 y RN-28: unirse por link requiere una cuenta activa. El expulsado no vuelve.
 //   Al que ya es miembro se lo lleva al grupo sin duplicar la membresía, así que no se le niega.
 // - RN-27: la vista previa del link se muestra a quien tiene sesión, verificada o no.
@@ -26,6 +27,7 @@ export const roles = [
 export type Rol = (typeof roles)[number];
 
 export const acciones = [
+  'listar_mis_grupos',
   'crear_grupo',
   'ver_invitacion',
   'unirse_por_link',
@@ -96,6 +98,14 @@ const deMiembros: Record<Rol, Decision> = {
 const deAdmins: Record<Rol, Decision> = { ...deMiembros, jugador: noEsAdmin };
 
 export const matriz: Readonly<Record<Accion, Readonly<Record<Rol, Decision>>>> = {
+  listar_mis_grupos: {
+    cuenta_sin_verificar: permitida,
+    no_miembro: permitida,
+    ex_miembro: permitida,
+    expulsado: permitida,
+    jugador: permitida,
+    admin: permitida,
+  },
   crear_grupo: {
     cuenta_sin_verificar: sinVerificar,
     no_miembro: permitida,

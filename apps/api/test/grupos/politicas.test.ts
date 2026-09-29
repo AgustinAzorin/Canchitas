@@ -23,6 +23,7 @@ const expulsado: Decision = { permitida: false, motivo: 'Expulsado' };
 
 // Columnas: cuenta_sin_verificar, no_miembro, ex_miembro, expulsado, jugador, admin.
 const esperada: Record<Accion, { requisito: string; celdas: readonly Decision[] }> = {
+  listar_mis_grupos: { requisito: 'RF-010 y RF-011', celdas: [si, si, si, si, si, si] },
   crear_grupo: { requisito: 'RF-010', celdas: [sinVerificar, si, si, si, si, si] },
   ver_invitacion: { requisito: 'RN-27', celdas: [si, si, si, si, si, si] },
   unirse_por_link: {
@@ -124,6 +125,7 @@ describe('RNF-013 — rol de quien actúa', () => {
 
   it('RN-07: un jugador no tiene ninguna acción de admin; un admin tiene todas', () => {
     expect(accionesPermitidas('jugador')).toEqual([
+      'listar_mis_grupos',
       'crear_grupo',
       'ver_invitacion',
       'unirse_por_link',

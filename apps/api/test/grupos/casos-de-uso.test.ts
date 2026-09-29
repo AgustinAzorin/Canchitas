@@ -251,7 +251,7 @@ describe('RN-26 y RN-07 — lo que ve cada rol del grupo', () => {
     const otro = (await crearGrupo({ nombre: 'Fútbol 11' }, ana))._unsafeUnwrap();
     memoria.poner(otro.id, 'beto', { rol: 'jugador', salida: 'salio' });
 
-    expect(await listarMisGrupos(beto)).toEqual([
+    expect((await listarMisGrupos(beto))._unsafeUnwrap()).toEqual([
       { id: grupo.id, nombre: 'Los del jueves', cantidadMiembros: 2, rol: 'jugador' },
     ]);
   });
