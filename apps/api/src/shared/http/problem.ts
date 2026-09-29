@@ -30,6 +30,7 @@ export const problemas = {
     status: 400,
   },
   noEncontrado: { type: `${baseDeTipos}no-encontrado`, title: 'No existe el recurso', status: 404 },
+  sinSesion: { type: `${baseDeTipos}sin-sesion`, title: 'No hay una sesión iniciada', status: 401 },
   servicioNoDisponible: {
     type: `${baseDeTipos}servicio-no-disponible`,
     title: 'El servicio no está disponible',

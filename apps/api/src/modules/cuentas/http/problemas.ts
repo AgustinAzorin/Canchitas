@@ -1,6 +1,6 @@
 // Catálogo de errores de /v1/cuentas como problem+json (ADR 0008). El `type` es estable: los
 // clientes eligen el texto a mostrar según él.
-import type { Problem } from '../../../shared/http/problem.ts';
+import { problemas, type Problem } from '../../../shared/http/problem.ts';
 
 const base = 'https://canchitas.app/errores/';
 
@@ -53,11 +53,7 @@ export const problemasDeCuentas = {
     status: 429,
     requisito: 'RNF-011',
   },
-  sinSesion: {
-    type: `${base}sin-sesion`,
-    title: 'No hay una sesión iniciada',
-    status: 401,
-  },
+  sinSesion: problemas.sinSesion,
   enlaceInvalido: {
     type: `${base}enlace-invalido`,
     title: 'El enlace venció o no es válido',

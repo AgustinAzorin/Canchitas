@@ -3,7 +3,7 @@ import { Writable } from 'node:stream';
 
 import { pino, type Logger } from 'pino';
 
-import { rutasRedactadas } from '../src/shared/logger.ts';
+import { censurar, rutasRedactadas } from '../src/shared/logger.ts';
 
 /** Logger que junta las líneas en memoria, con la misma redacción que el de producción. */
 export function loggerEnMemoria(): { logger: Logger; lineas: string[] } {
@@ -14,6 +14,6 @@ export function loggerEnMemoria(): { logger: Logger; lineas: string[] } {
       listo();
     },
   });
-  const logger = pino({ redact: { paths: rutasRedactadas, censor: '[redactado]' } }, destino);
+  const logger = pino({ redact: { paths: rutasRedactadas, censor: censurar } }, destino);
   return { logger, lineas };
 }

@@ -4,6 +4,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { construirApi } from '../src/composition/api.ts';
 import { cuentasInertes } from '../src/composition/cuentas-inertes.ts';
+import { dependenciasDeGruposInertes } from '../src/composition/grupos-inertes.ts';
 import { crearDependencias, type Dependencias } from '../src/composition/dependencias.ts';
 import { relojDelSistema } from '../src/shared/clock.ts';
 import { loggerEnMemoria } from './apoyo.ts';
@@ -35,6 +36,7 @@ describe('M0 — GET /v1/salud contra Postgres', () => {
   it('responde 200 conectada con el rol canchitas_api', async () => {
     const app = await construirApi({
       cuentas: cuentasInertes,
+      ...dependenciasDeGruposInertes,
       clock: relojDelSistema,
       logger: loggerEnMemoria().logger,
       consultarSalud: deps.consultarSalud,

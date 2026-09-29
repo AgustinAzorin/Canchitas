@@ -19,4 +19,16 @@ describe('ADR 0015 — los logs no guardan datos personales', () => {
     expect(salida).not.toContain('abc123');
     expect(salida).toContain('[redactado]');
   });
+
+  it('RF-011: la URL se loguea sin el token del link de invitación', () => {
+    const { logger, lineas } = loggerEnMemoria();
+
+    logger.info({ req: { method: 'GET', url: '/v1/invitaciones/tok-secreto/aceptacion?x=1' } });
+    logger.info({ req: { method: 'GET', url: '/v1/grupos' } });
+
+    const salida = lineas.join('');
+    expect(salida).not.toContain('tok-secreto');
+    expect(salida).toContain('/v1/invitaciones/[redactado]/aceptacion?x=1');
+    expect(salida).toContain('"url":"/v1/grupos"');
+  });
 });

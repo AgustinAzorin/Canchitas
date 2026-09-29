@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import { construirApi } from '../src/composition/api.ts';
 import { cuentasInertes } from '../src/composition/cuentas-inertes.ts';
+import { dependenciasDeGruposInertes } from '../src/composition/grupos-inertes.ts';
 import { relojDelSistema } from '../src/shared/clock.ts';
 import { loggerEnMemoria } from './apoyo.ts';
 
@@ -10,6 +11,7 @@ describe('ADR 0008 — errores HTTP como problem+json', () => {
   it('una ruta inexistente responde 404 con problem+json', async () => {
     const app = await construirApi({
       cuentas: cuentasInertes,
+      ...dependenciasDeGruposInertes,
       clock: relojDelSistema,
       logger: loggerEnMemoria().logger,
       consultarSalud: () =>
@@ -32,6 +34,7 @@ describe('ADR 0008 — errores HTTP como problem+json', () => {
     const { logger, lineas } = loggerEnMemoria();
     const app = await construirApi({
       cuentas: cuentasInertes,
+      ...dependenciasDeGruposInertes,
       clock: relojDelSistema,
       logger,
       consultarSalud: () => Promise.reject(new Error('detalle interno de Postgres')),

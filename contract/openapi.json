@@ -130,6 +130,19 @@
           "contrasenaNueva"
         ]
       },
+      "SolicitudDeGrupoInput": {
+        "type": "object",
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "De 1 a 60 caracteres sin contar los espacios de los extremos (RF-010)"
+          }
+        },
+        "required": [
+          "nombre"
+        ]
+      },
       "Problem": {
         "type": "object",
         "properties": {
@@ -251,6 +264,175 @@
         "required": [
           "token",
           "cuenta"
+        ],
+        "additionalProperties": false
+      },
+      "RolEnGrupo": {
+        "type": "string",
+        "enum": [
+          "jugador",
+          "admin"
+        ]
+      },
+      "AccionDeGrupo": {
+        "type": "string",
+        "enum": [
+          "ver_link",
+          "regenerar_link",
+          "crear_votacion",
+          "crear_partido",
+          "armar_equipos",
+          "cargar_resultado",
+          "registrar_costo",
+          "marcar_pago"
+        ],
+        "description": "Acción que el rol permite en el grupo (RN-07, RN-26). Los clientes muestran solo estas."
+      },
+      "Grupo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "nombre": {
+            "type": "string"
+          },
+          "cantidadMiembros": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "rol": {
+            "$ref": "#/components/schemas/RolEnGrupo"
+          },
+          "link": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Link de invitación vigente (RF-011). Solo lo ven los admins (RN-26); si no, null."
+          },
+          "acciones": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccionDeGrupo"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "nombre",
+          "cantidadMiembros",
+          "rol",
+          "link",
+          "acciones"
+        ],
+        "additionalProperties": false
+      },
+      "ResumenDeGrupo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "nombre": {
+            "type": "string"
+          },
+          "cantidadMiembros": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "rol": {
+            "$ref": "#/components/schemas/RolEnGrupo"
+          }
+        },
+        "required": [
+          "id",
+          "nombre",
+          "cantidadMiembros",
+          "rol"
+        ],
+        "additionalProperties": false
+      },
+      "ListaDeGrupos": {
+        "type": "object",
+        "properties": {
+          "grupos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResumenDeGrupo"
+            }
+          }
+        },
+        "required": [
+          "grupos"
+        ],
+        "additionalProperties": false
+      },
+      "EstadoDeInvitacion": {
+        "type": "string",
+        "enum": [
+          "puede_unirse",
+          "ya_es_miembro",
+          "cuenta_sin_verificar",
+          "expulsado"
+        ],
+        "description": "Qué pasa si acepta: se une; ya es miembro y va al grupo (RF-011); tiene que verificar el mail (RF-004); o fue expulsado y no puede volver por link (RN-28)."
+      },
+      "Invitacion": {
+        "type": "object",
+        "properties": {
+          "grupoId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "nombre": {
+            "type": "string"
+          },
+          "cantidadMiembros": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "estado": {
+            "$ref": "#/components/schemas/EstadoDeInvitacion"
+          }
+        },
+        "required": [
+          "grupoId",
+          "nombre",
+          "cantidadMiembros",
+          "estado"
+        ],
+        "additionalProperties": false
+      },
+      "Union": {
+        "type": "object",
+        "properties": {
+          "grupoId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "yaEraMiembro": {
+            "type": "boolean",
+            "description": "true si ya era miembro: no se duplicó la membresía"
+          }
+        },
+        "required": [
+          "grupoId",
+          "yaEraMiembro"
         ],
         "additionalProperties": false
       },
@@ -660,6 +842,384 @@
           },
           "400": {
             "description": "El enlace venció, no es válido o ya se usó",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/grupos": {
+      "post": {
+        "operationId": "crearGrupo",
+        "summary": "Crear un grupo",
+        "tags": [
+          "grupos"
+        ],
+        "description": "RF-010. Quien lo crea queda como admin y se genera el link de invitación. Requiere la cuenta verificada (RF-004).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SolicitudDeGrupoInput"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "sesionWeb": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Grupo creado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Grupo"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No hay sesión",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "La cuenta no está verificada (RF-004)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "El nombre no tiene entre 1 y 60 caracteres",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "listarMisGrupos",
+        "summary": "Mis grupos",
+        "tags": [
+          "grupos"
+        ],
+        "description": "RF-010 y RF-011. Los grupos donde quien tiene la sesión es miembro, ordenados por nombre.",
+        "security": [
+          {
+            "sesionWeb": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Grupos del usuario",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListaDeGrupos"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No hay sesión",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/grupos/{grupoId}": {
+      "get": {
+        "operationId": "consultarGrupo",
+        "summary": "Un grupo",
+        "tags": [
+          "grupos"
+        ],
+        "description": "RNF-013, RN-07 y RN-26. Solo para miembros; a los demás se les responde como si no existiera. El link viene solo para admins y `acciones` dice qué puede hacer el rol.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "in": "path",
+            "name": "grupoId",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "sesionWeb": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Grupo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Grupo"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No hay sesión",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El grupo no existe o no es miembro",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/grupos/{grupoId}/link/regeneracion": {
+      "post": {
+        "operationId": "regenerarLink",
+        "summary": "Regenerar el link de invitación",
+        "tags": [
+          "grupos"
+        ],
+        "description": "RF-012. Solo un admin. El link anterior deja de funcionar y el nuevo queda vigente sin vencimiento. Devuelve el grupo con el link nuevo.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "in": "path",
+            "name": "grupoId",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "sesionWeb": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Grupo con el link nuevo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Grupo"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No hay sesión",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "No es admin del grupo (RF-012, RN-07)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El grupo no existe o no es miembro",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/invitaciones/{token}": {
+      "get": {
+        "operationId": "consultarInvitacion",
+        "summary": "Ver un link de invitación antes de aceptarlo",
+        "tags": [
+          "grupos"
+        ],
+        "description": "RF-011 y RN-27. Solo con sesión: nombre del grupo, cantidad de miembros y qué pasa si acepta.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "description": "Token del link de invitación"
+          }
+        ],
+        "security": [
+          {
+            "sesionWeb": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invitación vigente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Invitacion"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No hay sesión",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El link no existe o se regeneró (RF-011)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/invitaciones/{token}/aceptacion": {
+      "post": {
+        "operationId": "unirsePorLink",
+        "summary": "Unirse a un grupo con el link",
+        "tags": [
+          "grupos"
+        ],
+        "description": "RF-011, RF-004 y RN-28. Sin aprobación de un admin. Si ya es miembro, no duplica la membresía. Quien había salido vuelve como jugador; el expulsado no.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "description": "Token del link de invitación"
+          }
+        ],
+        "security": [
+          {
+            "sesionWeb": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Es miembro del grupo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Union"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No hay sesión",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Cuenta sin verificar (RF-004) o expulsado del grupo (RN-28)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El link no existe o se regeneró (RF-011)",
             "content": {
               "application/problem+json": {
                 "schema": {

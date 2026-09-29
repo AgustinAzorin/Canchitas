@@ -188,6 +188,110 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/grupos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Mis grupos
+         * @description RF-010 y RF-011. Los grupos donde quien tiene la sesión es miembro, ordenados por nombre.
+         */
+        get: operations["listarMisGrupos"];
+        put?: never;
+        /**
+         * Crear un grupo
+         * @description RF-010. Quien lo crea queda como admin y se genera el link de invitación. Requiere la cuenta verificada (RF-004).
+         */
+        post: operations["crearGrupo"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/grupos/{grupoId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Un grupo
+         * @description RNF-013, RN-07 y RN-26. Solo para miembros; a los demás se les responde como si no existiera. El link viene solo para admins y `acciones` dice qué puede hacer el rol.
+         */
+        get: operations["consultarGrupo"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/grupos/{grupoId}/link/regeneracion": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Regenerar el link de invitación
+         * @description RF-012. Solo un admin. El link anterior deja de funcionar y el nuevo queda vigente sin vencimiento. Devuelve el grupo con el link nuevo.
+         */
+        post: operations["regenerarLink"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/invitaciones/{token}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Ver un link de invitación antes de aceptarlo
+         * @description RF-011 y RN-27. Solo con sesión: nombre del grupo, cantidad de miembros y qué pasa si acepta.
+         */
+        get: operations["consultarInvitacion"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/invitaciones/{token}/aceptacion": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Unirse a un grupo con el link
+         * @description RF-011, RF-004 y RN-28. Sin aprobación de un admin. Si ya es miembro, no duplica la membresía. Quien había salido vuelve como jugador; el expulsado no.
+         */
+        post: operations["unirsePorLink"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -234,6 +338,10 @@ export interface components {
             token: string;
             contrasenaNueva: string;
         };
+        SolicitudDeGrupoInput: {
+            /** @description De 1 a 60 caracteres sin contar los espacios de los extremos (RF-010) */
+            nombre: string;
+        };
         Problem: {
             /** Format: uri */
             type: string;
@@ -268,6 +376,51 @@ export interface components {
             /** @description Bearer para `Authorization`. Vence a los 30 días sin uso (RNF-012). */
             token: string;
             cuenta: components["schemas"]["Cuenta"];
+        };
+        /** @enum {string} */
+        RolEnGrupo: "jugador" | "admin";
+        /**
+         * @description Acción que el rol permite en el grupo (RN-07, RN-26). Los clientes muestran solo estas.
+         * @enum {string}
+         */
+        AccionDeGrupo: "ver_link" | "regenerar_link" | "crear_votacion" | "crear_partido" | "armar_equipos" | "cargar_resultado" | "registrar_costo" | "marcar_pago";
+        Grupo: {
+            /** Format: uuid */
+            id: string;
+            nombre: string;
+            cantidadMiembros: number;
+            rol: components["schemas"]["RolEnGrupo"];
+            /** @description Link de invitación vigente (RF-011). Solo lo ven los admins (RN-26); si no, null. */
+            link: string | null;
+            acciones: components["schemas"]["AccionDeGrupo"][];
+        };
+        ResumenDeGrupo: {
+            /** Format: uuid */
+            id: string;
+            nombre: string;
+            cantidadMiembros: number;
+            rol: components["schemas"]["RolEnGrupo"];
+        };
+        ListaDeGrupos: {
+            grupos: components["schemas"]["ResumenDeGrupo"][];
+        };
+        /**
+         * @description Qué pasa si acepta: se une; ya es miembro y va al grupo (RF-011); tiene que verificar el mail (RF-004); o fue expulsado y no puede volver por link (RN-28).
+         * @enum {string}
+         */
+        EstadoDeInvitacion: "puede_unirse" | "ya_es_miembro" | "cuenta_sin_verificar" | "expulsado";
+        Invitacion: {
+            /** Format: uuid */
+            grupoId: string;
+            nombre: string;
+            cantidadMiembros: number;
+            estado: components["schemas"]["EstadoDeInvitacion"];
+        };
+        Union: {
+            /** Format: uuid */
+            grupoId: string;
+            /** @description true si ya era miembro: no se duplicó la membresía */
+            yaEraMiembro: boolean;
         };
         Salud: {
             /** @constant */
@@ -606,6 +759,266 @@ export interface operations {
             };
             /** @description El enlace venció, no es válido o ya se usó */
             400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    listarMisGrupos: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Grupos del usuario */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListaDeGrupos"];
+                };
+            };
+            /** @description No hay sesión */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    crearGrupo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SolicitudDeGrupoInput"];
+            };
+        };
+        responses: {
+            /** @description Grupo creado */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Grupo"];
+                };
+            };
+            /** @description No hay sesión */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description La cuenta no está verificada (RF-004) */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description El nombre no tiene entre 1 y 60 caracteres */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    consultarGrupo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                grupoId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Grupo */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Grupo"];
+                };
+            };
+            /** @description No hay sesión */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description El grupo no existe o no es miembro */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    regenerarLink: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                grupoId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Grupo con el link nuevo */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Grupo"];
+                };
+            };
+            /** @description No hay sesión */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description No es admin del grupo (RF-012, RN-07) */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description El grupo no existe o no es miembro */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    consultarInvitacion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Token del link de invitación */
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Invitación vigente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Invitacion"];
+                };
+            };
+            /** @description No hay sesión */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description El link no existe o se regeneró (RF-011) */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    unirsePorLink: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Token del link de invitación */
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Es miembro del grupo */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Union"];
+                };
+            };
+            /** @description No hay sesión */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Cuenta sin verificar (RF-004) o expulsado del grupo (RN-28) */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description El link no existe o se regeneró (RF-011) */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

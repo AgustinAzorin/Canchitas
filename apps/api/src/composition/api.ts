@@ -10,7 +10,9 @@ import {
 } from 'fastify-type-provider-zod';
 
 import { rutasDeCuentas, type CasosDeUsoDeCuentas } from '../modules/cuentas/http/routes.ts';
+import { rutasDeGrupos, type CasosDeUsoDeGrupos } from '../modules/grupos/http/routes.ts';
 import type { ConsultarSalud } from '../salud/application/consultar-salud.ts';
+import type { Autenticar } from '../shared/autenticacion.ts';
 import { rutasDeSalud } from '../salud/http/routes.ts';
 import type { Clock } from '../shared/clock.ts';
 import { registrarManejoDeErrores } from '../shared/http/manejo-de-errores.ts';
@@ -19,6 +21,10 @@ export interface DependenciasHttp {
   logger: FastifyBaseLogger;
   consultarSalud: ConsultarSalud;
   cuentas: CasosDeUsoDeCuentas;
+  grupos: CasosDeUsoDeGrupos;
+  autenticar: Autenticar;
+  /** Origen de la web, para armar los links de invitación (RF-011). */
+  urlDeLaWeb: string;
   clock: Clock;
 }
 
@@ -59,6 +65,9 @@ export async function construirApi(deps: DependenciasHttp): Promise<FastifyInsta
   const rutas = app.withTypeProvider<ZodTypeProvider>();
   await rutas.register(rutasDeSalud(deps.consultarSalud));
   await rutas.register(rutasDeCuentas(deps.cuentas, () => deps.clock.ahora()));
+  await rutas.register(
+    rutasDeGrupos(deps.grupos, { autenticar: deps.autenticar, urlDeLaWeb: deps.urlDeLaWeb }),
+  );
 
   return app;
 }
