@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   referrer: 'no-referrer',
 };
 
-export default async function Pagina({ params }: PageProps<'/i/[token]'>) {
+export default async function Pagina({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
   return <PantallaDeInvitacion token={token} />;
 }

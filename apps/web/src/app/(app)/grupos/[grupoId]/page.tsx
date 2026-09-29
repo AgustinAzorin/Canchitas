@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: `${mensajes.grupos.titulo} · ${mensajes.app.nombre}`,
 };
 
-export default async function Pagina({ params }: PageProps<'/grupos/[grupoId]'>) {
+export default async function Pagina({ params }: { params: Promise<{ grupoId: string }> }) {
   const { grupoId } = await params;
   return <PantallaDeGrupo grupoId={grupoId} />;
 }

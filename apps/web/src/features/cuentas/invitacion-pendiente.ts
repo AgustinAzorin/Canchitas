@@ -24,6 +24,11 @@ export function hrefDeRegistro(
     : `/registro?${parametroDeInvitacion}=${encodeURIComponent(invitacion)}`;
 }
 
+/** Props de una página de Next que lee los `searchParams`. */
+export interface ConParametros {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
+
 /** Lee el parámetro de los `searchParams` de una página. */
 export function invitacionDe(
   parametros: Record<string, string | string[] | undefined>,
