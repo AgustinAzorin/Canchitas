@@ -1,3 +1,4 @@
+import { SeccionDeCuenta } from '@/features/cuentas/seccion-de-cuenta';
 import { SeccionDeSalud } from '@/features/salud/seccion-de-salud';
 import { mensajes } from '@/messages/es-AR';
 
@@ -8,6 +9,7 @@ export default function Inicio() {
         <h1 className="text-h2 md:text-h1">{mensajes.app.nombre}</h1>
         <p className="mt-1 text-body text-muted-foreground">{mensajes.app.descripcion}</p>
       </header>
+      <SeccionDeCuenta />
       <SeccionDeSalud />
     </main>
   );

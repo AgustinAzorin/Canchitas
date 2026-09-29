@@ -23,18 +23,22 @@ Sin funcionalidades. El repo queda listo para construir.
 - [x] `db`: roles `canchitas_migrator`, `canchitas_api`, `canchitas_worker`, `canchitas_readonly` en una migración nueva.
 - [x] `infra`: `docker-compose.yml` para dev (Postgres con PostGIS y pgTAP, API, worker, web); Caddy; esqueleto de OpenTofu; SOPS + age.
   - `.sops.yaml` sin claves: la clave pública age y el proveedor del VPS se definen en M1, con el deploy a staging.
-- [x] CI en GitHub Actions: lint, tipos, tests (Vitest, pgTAP, Android), squawk, contrato al día, oasdiff, dependency-cruiser, gitleaks, CodeQL, commitlint. Renovate configurado.
-  - Pendiente: la primera corrida en GitHub. Los pasos se corrieron en local; los snapshots visuales de la web se grabaron con otra versión de Chromium y pueden necesitar regrabarse en CI.
+- [x] CI en GitHub Actions: lint, tipos, tests (Vitest, pgTAP, Android), squawk, contrato al día, oasdiff, dependency-cruiser, gitleaks, CodeQL, commitlint. Renovate configurado. En verde en `main`.
 - [x] `CLAUDE.md` raíz: sección **Comandos** completa.
 
 **Hecho cuando:** `pnpm dev` levanta todo local; la web y la app muestran el estado de la API; CI en verde.
 
-**Estado:** `pnpm dev` levanta todo y la web muestra `/v1/salud` (Playwright). La app lo muestra en Robolectric contra la API local (`SaludContraApiLocalTest`); falta probarla en un emulador o un teléfono. Falta CI en verde en el PR.
+**Estado:** `pnpm dev` levanta todo y la web muestra `/v1/salud` (Playwright). La app lo muestra en Robolectric contra la API local (`SaludContraApiLocalTest`). CI en verde en `main`. Falta solo probar la app en un emulador o un teléfono.
 
 ## M1 — Esqueleto de punta a punta: cuentas y grupos
 
-- [ ] Better Auth: migraciones de sus tablas, mapeo a `usuario`, cookies web, bearer en Android.
-- [ ] RF-001 a RF-007, RN-20, RNF-009, RNF-011, RNF-012, RNF-014, RNF-018.
+- [x] Better Auth: migraciones de sus tablas, mapeo a `usuario`, cookies web, bearer en Android (PR `feat/m1-cuentas`).
+- [x] RF-001 a RF-007, RN-20, RNF-009, RNF-011, RNF-012, RNF-014, RNF-018 en API, web y Android (PR `feat/m1-cuentas`).
+  - Mails por SMTP con Nodemailer; en dev y E2E, Mailpit (ADR 0019). El proveedor real sigue abierto (TBD-09).
+  - La política de privacidad es un texto provisorio hasta M9.
+  - RF-004, segundo criterio (no unirse a un grupo sin verificar): se prueba con RF-011.
+  - Los enlaces de los mails abren la web también desde Android; los App Links llegan con RF-011.
+  - Pendiente: `Idempotency-Key` (ADR 0007) y rate limiting por IP (ADR 0015) en los endpoints de cuentas.
 - [ ] RF-010, RF-011, RF-012 (crear grupo, unirse por link, regenerar link), con App Links en Android.
 - [ ] Módulo de políticas de autorización con su matriz de tests (RN-07, RNF-013).
 - [ ] Deploy a staging en el VPS; backup diario a R2 y restore de prueba.
@@ -104,6 +108,6 @@ Sin funcionalidades. El repo queda listo para construir.
 | Qué pasa con un grupo cuyo creador borró su cuenta | M2, RF-018 |
 | TBD-04 fotos de canchas | M3, RF-074 |
 | TBD-06 redondeo | M7, costos |
-| TBD-09 proveedor de mails | M1 |
+| TBD-09 proveedor de mails | M1, deploy a staging |
 | TBD-10 precarga de canchas | M6, test cerrado |
 | TBD-12 plazo de la lista de espera sobre la hora | M5, RF-038 |

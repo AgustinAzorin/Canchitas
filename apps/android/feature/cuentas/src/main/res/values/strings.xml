@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Textos de cuentas (RF-001 a RF-007). Voseo, sin exclamaciones ni emojis (GUIDELINES). -->
+<resources>
+    <!-- Campos -->
+    <string name="feature_cuentas_campo_email">Mail</string>
+    <string name="feature_cuentas_campo_contrasena">Contraseña</string>
+    <string name="feature_cuentas_campo_nombre_usuario">Nombre de usuario</string>
+    <string name="feature_cuentas_campo_fecha_nacimiento">Fecha de nacimiento</string>
+    <string name="feature_cuentas_ayuda_contrasena">Entre 8 y 128 caracteres.</string>
+    <string name="feature_cuentas_ayuda_nombre_usuario">De 3 a 20 letras, números, punto o guion bajo. Te pueden buscar por este nombre.</string>
+    <string name="feature_cuentas_ayuda_fecha_nacimiento">Tenés que tener 18 años o más.</string>
+    <string name="feature_cuentas_elegir_fecha">Elegir fecha</string>
+    <string name="feature_cuentas_mostrar_contrasena">Mostrar contraseña</string>
+    <string name="feature_cuentas_ocultar_contrasena">Ocultar contraseña</string>
+    <string name="feature_cuentas_aceptar">Aceptar</string>
+    <string name="feature_cuentas_cancelar">Cancelar</string>
+
+    <!-- Validación de la experiencia (la API decide) -->
+    <string name="feature_cuentas_obligatorio">Completá este campo.</string>
+    <string name="feature_cuentas_validacion_email">Escribí un mail válido, por ejemplo nombre@mail.com.</string>
+    <string name="feature_cuentas_validacion_contrasena_corta">La contraseña tiene que tener al menos 8 caracteres.</string>
+    <string name="feature_cuentas_validacion_contrasena_larga">La contraseña puede tener hasta 128 caracteres.</string>
+    <string name="feature_cuentas_validacion_nombre_usuario">Usá de 3 a 20 letras sin tilde, números, punto o guion bajo.</string>
+    <string name="feature_cuentas_validacion_privacidad">Para crear la cuenta tenés que aceptar la política de privacidad.</string>
+
+    <!-- Errores por el type del problem+json (ADR 0008) -->
+    <string name="feature_cuentas_error_email_en_uso">Ese mail ya está en uso. Si es tuyo, iniciá sesión o recuperá la contraseña.</string>
+    <string name="feature_cuentas_error_nombre_en_uso">Ese nombre de usuario ya está en uso. Probá con otro.</string>
+    <string name="feature_cuentas_error_menor_de_edad">Tenés que tener 18 años o más para registrarte.</string>
+    <string name="feature_cuentas_error_fecha_invalida">Esa fecha no existe. Revisala.</string>
+    <string name="feature_cuentas_error_credenciales">El mail o la contraseña no son correctos.</string>
+    <string name="feature_cuentas_error_bloqueada">Hubo 5 intentos fallidos seguidos. Por seguridad, esperá 15 minutos para volver a intentar.</string>
+    <string name="feature_cuentas_error_solicitud_invalida">Revisá los datos: alguno no tiene el formato esperado.</string>
+    <string name="feature_cuentas_error_sin_conexion">Sin conexión. No se guardó nada; probá de nuevo.</string>
+    <string name="feature_cuentas_error_inesperado">Algo salió mal de nuestro lado. Probá de nuevo en unos minutos.</string>
+
+    <!-- Registro -->
+    <string name="feature_cuentas_registro_titulo">Crear cuenta</string>
+    <string name="feature_cuentas_registro_privacidad">Leí y acepto la política de privacidad</string>
+    <string name="feature_cuentas_registro_ver_privacidad">Ver la política de privacidad</string>
+    <string name="feature_cuentas_registro_enviar">Crear cuenta</string>
+    <string name="feature_cuentas_registro_ya_tenes_cuenta">Ya tengo cuenta</string>
+    <string name="feature_cuentas_registro_listo_titulo">Revisá tu mail</string>
+    <string name="feature_cuentas_registro_listo">Te mandamos un enlace a %1$s para activar tu cuenta. Vence en 24 horas.</string>
+    <string name="feature_cuentas_registro_ir_a_ingresar">Ir a iniciar sesión</string>
+
+    <!-- Ingreso -->
+    <string name="feature_cuentas_ingreso_titulo">Iniciar sesión</string>
+    <string name="feature_cuentas_ingreso_enviar">Ingresar</string>
+    <string name="feature_cuentas_ingreso_olvido">Me olvidé la contraseña</string>
+    <string name="feature_cuentas_ingreso_crear_cuenta">Crear una cuenta</string>
+
+    <!-- Verificación -->
+    <string name="feature_cuentas_reenviar">Reenviar mail</string>
+    <string name="feature_cuentas_reenviado">Si la cuenta existe y no está verificada, te mandamos un enlace nuevo.</string>
+    <string name="feature_cuentas_sin_verificar">Tu mail no está verificado. Hasta verificarlo no vas a poder unirte a grupos.</string>
+
+    <!-- Recuperación -->
+    <string name="feature_cuentas_recuperacion_titulo">Recuperar contraseña</string>
+    <string name="feature_cuentas_recuperacion_explicacion">Te mandamos un enlace para definir una contraseña nueva. Vence en 1 hora y se abre en el navegador.</string>
+    <string name="feature_cuentas_recuperacion_enviar">Mandar enlace</string>
+    <string name="feature_cuentas_recuperacion_enviado">Si hay una cuenta con ese mail, te mandamos el enlace. Revisá también el correo no deseado.</string>
+    <string name="feature_cuentas_volver_a_ingresar">Volver a iniciar sesión</string>
+
+    <!-- Cuenta actual -->
+    <string name="feature_cuentas_hola">Hola, %1$s</string>
+    <string name="feature_cuentas_cerrar_sesion">Cerrar sesión</string>
+    <string name="feature_cuentas_consultando">Consultando tu sesión…</string>
+
+    <!-- Privacidad (RNF-018). Texto provisorio hasta M9. -->
+    <string name="feature_cuentas_privacidad_titulo">Política de privacidad</string>
+    <string name="feature_cuentas_privacidad_provisoria">Texto provisorio: la política definitiva se publica antes del lanzamiento (Ley 25.326).</string>
+    <string name="feature_cuentas_privacidad_1">Canchitas guarda tu mail, tu nombre de usuario y tu fecha de nacimiento para crear y proteger tu cuenta.</string>
+    <string name="feature_cuentas_privacidad_2">Tu mail se usa solo para verificar la cuenta y para recuperar la contraseña. No se muestra a otras personas.</string>
+    <string name="feature_cuentas_privacidad_3">Tu fecha de nacimiento se usa solo para comprobar que tenés 18 años o más.</string>
+    <string name="feature_cuentas_volver">Volver</string>
+</resources>

@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 
 import { crearConsultarSalud } from '../src/salud/application/consultar-salud.ts';
 import { construirApi } from '../src/composition/api.ts';
+import { cuentasInertes } from '../src/composition/cuentas-inertes.ts';
+import { relojDelSistema } from '../src/shared/clock.ts';
 import { loggerEnMemoria } from './apoyo.ts';
 
 const instante = new Date('2026-09-28T21:00:00.000Z');
@@ -37,6 +39,8 @@ describe('M0 — consultar salud', () => {
 describe('M0 — GET /v1/salud', () => {
   it('responde 200 con el estado', async () => {
     const app = await construirApi({
+      cuentas: cuentasInertes,
+      clock: relojDelSistema,
       logger: loggerEnMemoria().logger,
       consultarSalud: () => Promise.resolve(ok({ estado: 'ok', version: '1.2.3', instante })),
     });
@@ -53,6 +57,8 @@ describe('M0 — GET /v1/salud', () => {
 
   it('responde 503 con problem+json si la base no responde', async () => {
     const app = await construirApi({
+      cuentas: cuentasInertes,
+      clock: relojDelSistema,
       logger: loggerEnMemoria().logger,
       consultarSalud: () => Promise.resolve(err({ tipo: 'BaseNoDisponible' })),
     });

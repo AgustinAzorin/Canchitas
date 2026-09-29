@@ -40,3 +40,6 @@ Thumbs.db
 next-env.d.ts
 .kotlin/
 *.tsbuildinfo
+
+# SQL que genera el CLI de Better Auth: se revisa y se pasa a db/migrations (ADR 0009)
+apps/api/better-auth.sql

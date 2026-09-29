@@ -119,11 +119,14 @@ La API valida el resto, con tests:
 - advertencia de goles que no suman el resultado (RF-048);
 - plazos de la lista de espera y notificaciones.
 
-La librería de auth crea sus propias tablas (contraseña, sesiones, tokens, bloqueo de RNF-011) y mapea su usuario a `usuario`.
+La librería de auth (Better Auth, ADR 0009) crea sus propias tablas y mapea su usuario a `usuario`:
+- `sesion` (web y Android, 30 días desde el último uso, RNF-012), `credencial` (hash argon2id, RNF-009) y `verificacion` (tokens de recuperación, que se borran al usarse, RNF-014).
+- `intento_inicio`: el bloqueo de RNF-011 lo hace la API, porque Better Auth no lo cubre. Guarda el SHA-256 del mail, no el mail.
+- `dispositivo.sesion_id`: cerrar la sesión borra el dispositivo que se registró con ella (RF-007).
+- **Excepción a "lo derivado no se guarda":** Better Auth solo sabe escribir `email_verificado` (boolean). Un trigger lo mantiene de acuerdo con `estado` y `email_verificado_en`, y un CHECK lo garantiza. Las tres columnas quedan porque `estado` es el lenguaje del SRS (RF-004).
 
 ## Pendiente
 
 - TBD-04 (fotos), TBD-06 (redondeo), TBD-11 (retención de inactivos), TBD-12 (plazo de lista de espera sobre la hora) y la retención de auditoría no cambian tablas, solo valores o jobs.
 - Si alguien crea un grupo y borra su cuenta, nadie puede borrar ese grupo (RN-23 dice "solo el creador"). Hay que decidir si pasa al admin más antiguo.
 - Roles de Postgres con permisos mínimos (ADR 0005): hito M0.
-- Tablas de Better Auth (ADR 0009): hito M1.

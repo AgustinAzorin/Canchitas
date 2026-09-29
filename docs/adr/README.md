@@ -22,3 +22,4 @@ Cada decisión que afecta a más de un archivo se registra acá (ADR 0001). Plan
 | [0016](0016-invitados-verificados.md) | Invitados identificados por mail verificado | Propuesta — requiere actualizar RF-110 en el SRS |
 | [0017](0017-design-tokens.md) | Design tokens como fuente única | Aceptada |
 | [0018](0018-dueno-del-esquema.md) | El migrador es dueño del esquema y toda migración corre con su rol | Propuesta |
+| [0019](0019-mails-en-dev-con-mailpit.md) | Mails de dev y de los E2E con Mailpit | Propuesta |

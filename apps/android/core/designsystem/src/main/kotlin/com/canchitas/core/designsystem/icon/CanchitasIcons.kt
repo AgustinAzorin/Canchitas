@@ -10,4 +10,10 @@ object CanchitasIcons {
 
     @DrawableRes
     val Error: Int = R.drawable.ic_canchitas_error
+
+    @DrawableRes
+    val Info: Int = R.drawable.ic_canchitas_info
+
+    @DrawableRes
+    val Warning: Int = R.drawable.ic_canchitas_warning
 }

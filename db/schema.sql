@@ -583,6 +583,30 @@ END $$;
 
 
 --
+-- Name: tg_usuario_verificacion(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.tg_usuario_verificacion() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+  IF (TG_OP = 'INSERT' AND NEW.email_verificado)
+     OR (TG_OP = 'UPDATE' AND NEW.email_verificado IS DISTINCT FROM OLD.email_verificado) THEN
+    IF NEW.email_verificado THEN
+      NEW.estado := 'activa';
+      NEW.email_verificado_en := coalesce(NEW.email_verificado_en, now());
+    ELSE
+      NEW.estado := 'sin_verificar';
+      NEW.email_verificado_en := NULL;
+    END IF;
+  ELSE
+    NEW.email_verificado := (NEW.estado = 'activa');
+  END IF;
+  RETURN NEW;
+END $$;
+
+
+--
 -- Name: tg_voto_figura_valido(); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -842,6 +866,27 @@ ALTER TABLE public.contacto_cancha ALTER COLUMN id ADD GENERATED ALWAYS AS IDENT
 
 
 --
+-- Name: credencial; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.credencial (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    usuario_id uuid NOT NULL,
+    cuenta_id text NOT NULL,
+    proveedor_id text NOT NULL,
+    contrasena_hash text,
+    token_acceso text,
+    token_refresco text,
+    token_id text,
+    token_acceso_expira_en timestamp with time zone,
+    token_refresco_expira_en timestamp with time zone,
+    alcance text,
+    creado_en timestamp with time zone DEFAULT now() NOT NULL,
+    actualizado_en timestamp with time zone NOT NULL
+);
+
+
+--
 -- Name: denuncia; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -871,7 +916,8 @@ CREATE TABLE public.dispositivo (
     plataforma public.plataforma NOT NULL,
     push_token text NOT NULL,
     creado_en timestamp with time zone DEFAULT now() NOT NULL,
-    ultimo_uso_en timestamp with time zone DEFAULT now() NOT NULL
+    ultimo_uso_en timestamp with time zone DEFAULT now() NOT NULL,
+    sesion_id uuid
 );
 
 
@@ -888,6 +934,20 @@ CREATE TABLE public.grupo (
     creado_en timestamp with time zone DEFAULT now() NOT NULL,
     borrado_en timestamp with time zone,
     CONSTRAINT grupo_nombre_check CHECK (((length(btrim(nombre)) >= 1) AND (length(btrim(nombre)) <= 60)))
+);
+
+
+--
+-- Name: intento_inicio; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.intento_inicio (
+    email_hash bytea NOT NULL,
+    fallidos_consecutivos integer NOT NULL,
+    bloqueado_hasta timestamp with time zone,
+    actualizado_en timestamp with time zone DEFAULT now() NOT NULL,
+    CONSTRAINT intento_inicio_email_hash_check CHECK ((length(email_hash) = 32)),
+    CONSTRAINT intento_inicio_fallidos_consecutivos_check CHECK ((fallidos_consecutivos > 0))
 );
 
 
@@ -1206,6 +1266,22 @@ CREATE TABLE public.serie (
 
 
 --
+-- Name: sesion; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.sesion (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    usuario_id uuid NOT NULL,
+    token text NOT NULL,
+    expira_en timestamp with time zone NOT NULL,
+    ip text,
+    agente text,
+    creado_en timestamp with time zone DEFAULT now() NOT NULL,
+    actualizado_en timestamp with time zone NOT NULL
+);
+
+
+--
 -- Name: solicitud_historial; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1236,6 +1312,10 @@ CREATE TABLE public.usuario (
     quien_califica public.quien_califica DEFAULT 'grupos'::public.quien_califica NOT NULL,
     visibilidad_perfil public.visibilidad_perfil DEFAULT 'grupos'::public.visibilidad_perfil NOT NULL,
     creado_en timestamp with time zone DEFAULT now() NOT NULL,
+    email_verificado boolean DEFAULT false NOT NULL,
+    imagen text,
+    actualizado_en timestamp with time zone DEFAULT now() NOT NULL,
+    CONSTRAINT email_verificado_coherente CHECK ((email_verificado = (estado = 'activa'::public.estado_cuenta))),
     CONSTRAINT mayor_de_edad CHECK ((fecha_nacimiento <= (((creado_en AT TIME ZONE 'America/Argentina/Buenos_Aires'::text))::date - '18 years'::interval))),
     CONSTRAINT usuario_nombre_usuario_check CHECK ((nombre_usuario OPERATOR(public.~) '^[a-z0-9_.]{3,20}$'::public.citext)),
     CONSTRAINT verificacion_coherente CHECK (((estado = 'activa'::public.estado_cuenta) = (email_verificado_en IS NOT NULL)))
@@ -1587,6 +1667,20 @@ CREATE VIEW public.v_votacion_resultado AS
 
 
 --
+-- Name: verificacion; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.verificacion (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    identificador text NOT NULL,
+    valor text NOT NULL,
+    expira_en timestamp with time zone NOT NULL,
+    creado_en timestamp with time zone DEFAULT now() NOT NULL,
+    actualizado_en timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
 -- Name: auditoria auditoria_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1667,6 +1761,14 @@ ALTER TABLE ONLY public.contacto_cancha
 
 
 --
+-- Name: credencial credencial_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.credencial
+    ADD CONSTRAINT credencial_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: denuncia denuncia_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1712,6 +1814,14 @@ ALTER TABLE ONLY public.grupo
 
 ALTER TABLE ONLY public.grupo
     ADD CONSTRAINT grupo_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: intento_inicio intento_inicio_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.intento_inicio
+    ADD CONSTRAINT intento_inicio_pkey PRIMARY KEY (email_hash);
 
 
 --
@@ -1915,6 +2025,22 @@ ALTER TABLE ONLY public.serie
 
 
 --
+-- Name: sesion sesion_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.sesion
+    ADD CONSTRAINT sesion_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: sesion sesion_token_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.sesion
+    ADD CONSTRAINT sesion_token_key UNIQUE (token);
+
+
+--
 -- Name: solicitud_historial solicitud_historial_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1944,6 +2070,14 @@ ALTER TABLE ONLY public.usuario
 
 ALTER TABLE ONLY public.usuario
     ADD CONSTRAINT usuario_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: verificacion verificacion_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.verificacion
+    ADD CONSTRAINT verificacion_pkey PRIMARY KEY (id);
 
 
 --
@@ -2042,10 +2176,24 @@ CREATE INDEX contacto_cancha_idx ON public.contacto_cancha USING btree (cancha_i
 
 
 --
+-- Name: credencial_usuario_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX credencial_usuario_id_idx ON public.credencial USING btree (usuario_id);
+
+
+--
 -- Name: denuncia_pendiente_idx; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX denuncia_pendiente_idx ON public.denuncia USING btree (tipo, contenido_id) WHERE (resuelta_en IS NULL);
+
+
+--
+-- Name: dispositivo_sesion_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX dispositivo_sesion_idx ON public.dispositivo USING btree (sesion_id);
 
 
 --
@@ -2168,10 +2316,24 @@ CREATE INDEX reporte_pendiente_idx ON public.reporte_cancha USING btree (creado_
 
 
 --
+-- Name: sesion_usuario_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX sesion_usuario_id_idx ON public.sesion USING btree (usuario_id);
+
+
+--
 -- Name: solicitud_historial_pendiente_uq; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX solicitud_historial_pendiente_uq ON public.solicitud_historial USING btree (invitado_jugador_id) WHERE (estado = 'pendiente'::public.estado_solicitud);
+
+
+--
+-- Name: verificacion_identificador_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX verificacion_identificador_idx ON public.verificacion USING btree (identificador);
 
 
 --
@@ -2256,6 +2418,13 @@ CREATE TRIGGER participacion_cupo BEFORE INSERT OR UPDATE OF estado ON public.pa
 --
 
 CREATE TRIGGER resena_valida BEFORE INSERT ON public.resena FOR EACH ROW EXECUTE FUNCTION public.tg_resena_valida();
+
+
+--
+-- Name: usuario usuario_verificacion; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER usuario_verificacion BEFORE INSERT OR UPDATE ON public.usuario FOR EACH ROW EXECUTE FUNCTION public.tg_usuario_verificacion();
 
 
 --
@@ -2385,6 +2554,14 @@ ALTER TABLE ONLY public.contacto_cancha
 
 
 --
+-- Name: credencial credencial_usuario_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.credencial
+    ADD CONSTRAINT credencial_usuario_id_fkey FOREIGN KEY (usuario_id) REFERENCES public.usuario(id) ON DELETE CASCADE;
+
+
+--
 -- Name: denuncia denuncia_denunciante_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2398,6 +2575,14 @@ ALTER TABLE ONLY public.denuncia
 
 ALTER TABLE ONLY public.denuncia
     ADD CONSTRAINT denuncia_resuelta_por_fkey FOREIGN KEY (resuelta_por) REFERENCES public.usuario(id) ON DELETE SET NULL;
+
+
+--
+-- Name: dispositivo dispositivo_sesion_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.dispositivo
+    ADD CONSTRAINT dispositivo_sesion_id_fkey FOREIGN KEY (sesion_id) REFERENCES public.sesion(id) ON DELETE CASCADE;
 
 
 --
@@ -2737,6 +2922,14 @@ ALTER TABLE ONLY public.serie
 
 
 --
+-- Name: sesion sesion_usuario_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.sesion
+    ADD CONSTRAINT sesion_usuario_id_fkey FOREIGN KEY (usuario_id) REFERENCES public.usuario(id) ON DELETE CASCADE;
+
+
+--
 -- Name: solicitud_historial solicitud_historial_invitado_jugador_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2826,4 +3019,8 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20260928120006'),
     ('20260928120007'),
     ('20260928120008'),
-    ('20260928215000');
+    ('20260928215000'),
+    ('20260929133311'),
+    ('20260929133313'),
+    ('20260929133315'),
+    ('20260929133317');

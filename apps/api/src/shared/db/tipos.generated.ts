@@ -160,6 +160,22 @@ export interface ContactoCancha {
   usuario_id: string | null;
 }
 
+export interface Credencial {
+  actualizado_en: Timestamp;
+  alcance: string | null;
+  contrasena_hash: string | null;
+  creado_en: Generated<Timestamp>;
+  cuenta_id: string;
+  id: Generated<string>;
+  proveedor_id: string;
+  token_acceso: string | null;
+  token_acceso_expira_en: Timestamp | null;
+  token_id: string | null;
+  token_refresco: string | null;
+  token_refresco_expira_en: Timestamp | null;
+  usuario_id: string;
+}
+
 export interface Denuncia {
   contenido_id: string;
   creado_en: Generated<Timestamp>;
@@ -177,6 +193,7 @@ export interface Dispositivo {
   id: Generated<string>;
   plataforma: Plataforma;
   push_token: string;
+  sesion_id: string | null;
   ultimo_uso_en: Generated<Timestamp>;
   usuario_id: string;
 }
@@ -189,6 +206,13 @@ export interface Grupo {
   link_regenerado_en: Timestamp | null;
   link_token: string;
   nombre: string;
+}
+
+export interface IntentoInicio {
+  actualizado_en: Generated<Timestamp>;
+  bloqueado_hasta: Timestamp | null;
+  email_hash: Buffer;
+  fallidos_consecutivos: number;
 }
 
 export interface InvitadoToken {
@@ -371,6 +395,17 @@ export interface Serie {
   zona_horaria: Generated<string>;
 }
 
+export interface Sesion {
+  actualizado_en: Timestamp;
+  agente: string | null;
+  creado_en: Generated<Timestamp>;
+  expira_en: Timestamp;
+  id: Generated<string>;
+  ip: string | null;
+  token: string;
+  usuario_id: string;
+}
+
 export interface SolicitudHistorial {
   creado_en: Generated<Timestamp>;
   estado: Generated<EstadoSolicitud>;
@@ -382,12 +417,15 @@ export interface SolicitudHistorial {
 }
 
 export interface Usuario {
+  actualizado_en: Generated<Timestamp>;
   creado_en: Generated<Timestamp>;
   email: string;
+  email_verificado: Generated<boolean>;
   email_verificado_en: Timestamp | null;
   estado: Generated<EstadoCuenta>;
   fecha_nacimiento: Timestamp;
   id: Generated<string>;
+  imagen: string | null;
   nombre_usuario: string;
   privacidad_aceptada_en: Timestamp;
   quien_califica: Generated<QuienCalifica>;
@@ -432,6 +470,15 @@ export interface VDeuda {
   deuda: number | null;
   grupo_id: string | null;
   jugador_id: string | null;
+}
+
+export interface Verificacion {
+  actualizado_en: Generated<Timestamp>;
+  creado_en: Generated<Timestamp>;
+  expira_en: Timestamp;
+  id: Generated<string>;
+  identificador: string;
+  valor: string;
 }
 
 export interface VEstadisticasGlobal {
@@ -589,9 +636,11 @@ export interface DB {
   cancha_foto: CanchaFoto;
   complejo: Complejo;
   contacto_cancha: ContactoCancha;
+  credencial: Credencial;
   denuncia: Denuncia;
   dispositivo: Dispositivo;
   grupo: Grupo;
+  intento_inicio: IntentoInicio;
   invitado_token: InvitadoToken;
   jugador: Jugador;
   metrica_diaria: MetricaDiaria;
@@ -608,6 +657,7 @@ export interface DB {
   reporte_cancha: ReporteCancha;
   resena: Resena;
   serie: Serie;
+  sesion: Sesion;
   solicitud_historial: SolicitudHistorial;
   usuario: Usuario;
   v_avales: VAvales;
@@ -625,6 +675,7 @@ export interface DB {
   v_partido: VPartido;
   v_radar: VRadar;
   v_votacion_resultado: VVotacionResultado;
+  verificacion: Verificacion;
   votacion: Votacion;
   voto: Voto;
   voto_figura: VotoFigura;

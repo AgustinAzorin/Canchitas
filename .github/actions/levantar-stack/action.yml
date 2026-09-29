@@ -1,5 +1,5 @@
 name: Levantar el stack local
-description: Postgres migrado, Caddy y la API en http://localhost:8080, como `pnpm dev`.
+description: Postgres migrado, Mailpit, Caddy y la API en http://localhost:8080, como `pnpm dev`.
 runs:
   using: composite
   steps:
@@ -7,7 +7,7 @@ runs:
       run: |
         pnpm db:up
         pnpm db:migrate
-        docker compose -f infra/compose/docker-compose.yml up -d --wait caddy
+        docker compose -f infra/compose/docker-compose.yml up -d --wait caddy mailpit
     - shell: bash
       working-directory: apps/api
       run: |

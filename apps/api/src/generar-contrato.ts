@@ -6,9 +6,13 @@ import { join } from 'node:path';
 import { ok } from 'neverthrow';
 
 import { construirApi } from './composition/api.ts';
+import { cuentasInertes } from './composition/cuentas-inertes.ts';
+import { relojDelSistema } from './shared/clock.ts';
 import { crearLogger } from './shared/logger.ts';
 
 const app = await construirApi({
+  cuentas: cuentasInertes,
+  clock: relojDelSistema,
   logger: crearLogger('silent', 'contrato'),
   consultarSalud: () =>
     Promise.resolve(ok({ estado: 'ok', version: 'contrato', instante: new Date(0) })),

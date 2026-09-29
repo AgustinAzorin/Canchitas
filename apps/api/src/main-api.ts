@@ -1,11 +1,20 @@
 // Punto de entrada HTTP (ADR 0006: misma imagen que el worker, otro comando).
 import { construirApi } from './composition/api.ts';
+import { crearCuentas, crearEnviadorDeMails } from './composition/cuentas.ts';
 import { crearDependencias } from './composition/dependencias.ts';
-import { leerConfig } from './shared/config.ts';
+import { relojDelSistema } from './shared/clock.ts';
+import { leerConfigDeApi } from './shared/config.ts';
 
-const config = leerConfig(process.env);
+const config = leerConfigDeApi(process.env);
 const deps = crearDependencias(config, 'api');
-const app = await construirApi(deps);
+const cuentas = crearCuentas({
+  config,
+  db: deps.db,
+  logger: deps.logger,
+  clock: relojDelSistema,
+  mails: crearEnviadorDeMails(config),
+});
+const app = await construirApi({ ...deps, cuentas, clock: relojDelSistema });
 
 async function apagar(senal: string): Promise<void> {
   app.log.info({ senal }, 'apagando');
