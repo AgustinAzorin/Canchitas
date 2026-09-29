@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.canchitas.android.application.compose)
     alias(libs.plugins.canchitas.hilt)
     alias(libs.plugins.roborazzi)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -27,7 +28,12 @@ android {
 dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.core.data)
+    implementation(projects.feature.cuentas)
     implementation(projects.feature.salud)
+    implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.navigation.compose)
