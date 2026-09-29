@@ -1,6 +1,9 @@
 package com.canchitas.app
 
+import android.graphics.Bitmap
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onRoot
@@ -13,7 +16,7 @@ import com.canchitas.core.network.generated.apis.SaludApi
 import com.canchitas.core.network.salud.RetrofitSaludNetwork
 import com.canchitas.feature.salud.SaludScreen
 import com.canchitas.feature.salud.SaludViewModel
-import com.github.takahirom.roborazzi.captureRoboImage
+import java.io.File
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okhttp3.OkHttpClient
@@ -61,6 +64,17 @@ class SaludContraApiLocalTest {
                 hasText("La API está en línea.")
             ).fetchSemanticsNodes().isNotEmpty()
         }
-        composeRule.onRoot().captureRoboImage("build/outputs/roborazzi/salud_contra_api_local.png")
+        // Evidencia, no regresión: muestra la hora del servidor, así que se guarda sin comparar
+        // (no pasa por Roborazzi, que en CI verifica contra una referencia).
+        val archivo = File("build/outputs/salud_contra_api_local.png").apply {
+            parentFile?.mkdirs()
+        }
+        archivo.outputStream().use { salida ->
+            composeRule.onRoot().captureToImage().asAndroidBitmap().compress(
+                Bitmap.CompressFormat.PNG,
+                100,
+                salida
+            )
+        }
     }
 }
