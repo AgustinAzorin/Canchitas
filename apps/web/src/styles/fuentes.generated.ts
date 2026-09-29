@@ -13,9 +13,7 @@ export const barlow = localFont({
 });
 
 export const barlowCondensed = localFont({
-  src: [
-    { path: './fuentes/BarlowCondensed-Bold.ttf', weight: '700', style: 'normal' },
-  ],
+  src: [{ path: './fuentes/BarlowCondensed-Bold.ttf', weight: '700', style: 'normal' }],
   variable: '--font-barlow-condensed',
   display: 'swap',
 });
