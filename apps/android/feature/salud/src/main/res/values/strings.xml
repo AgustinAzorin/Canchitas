@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_salud_titulo">Estado del servicio</string>
+    <string name="feature_salud_consultando">Consultando la API…</string>
+    <string name="feature_salud_en_linea">La API está en línea.</string>
+    <string name="feature_salud_version">Versión</string>
+    <string name="feature_salud_hora_del_servidor">Hora del servidor</string>
+    <string name="feature_salud_base_caida">La API responde, pero la base de datos no. Probá de nuevo en unos minutos.</string>
+    <string name="feature_salud_sin_conexion">No pudimos conectarnos con la API. Revisá tu conexión y probá de nuevo.</string>
+</resources>

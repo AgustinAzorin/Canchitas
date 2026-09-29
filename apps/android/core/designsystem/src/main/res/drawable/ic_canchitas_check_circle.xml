@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Círculo con tilde, trazo redondeado al estilo de Material Symbols Rounded (GUIDELINES). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FF000000"
+        android:fillType="evenOdd"
+        android:pathData="M12,2A10,10 0,1 0,12 22A10,10 0,1 0,12 2ZM12,4A8,8 0,1 1,12 20A8,8 0,1 1,12 4Z" />
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M10.6,13.8L8.45,11.65C8.07,11.27 7.43,11.27 7.05,11.65C6.67,12.03 6.67,12.67 7.05,13.05L9.9,15.9C10.29,16.29 10.91,16.29 11.3,15.9L16.95,10.25C17.33,9.87 17.33,9.23 16.95,8.85C16.57,8.47 15.93,8.47 15.55,8.85Z" />
+</vector>

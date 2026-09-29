@@ -1,0 +1,42 @@
+# Dependencias y builds
+node_modules/
+.pnpm-store/
+dist/
+build/
+.next/
+out/
+.turbo/
+coverage/
+reports/
+storybook-static/
+playwright-report/
+test-results/
+
+# Android / Gradle
+.gradle/
+local.properties
+*.iml
+.idea/
+captures/
+.externalNativeBuild/
+.cxx/
+*.keystore
+*.jks
+google-services.json
+
+# Entorno y secretos (los secretos van cifrados con SOPS: *.enc.*)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# Sistema
+.DS_Store
+Thumbs.db
+next-env.d.ts
+.kotlin/
+*.tsbuildinfo

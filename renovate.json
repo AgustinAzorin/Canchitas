@@ -1,0 +1,51 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", ":semanticCommits", "helpers:pinGitHubActionDigests"],
+  "timezone": "America/Argentina/Buenos_Aires",
+  "schedule": ["before 9am on monday"],
+  "rangeStrategy": "pin",
+  "minimumReleaseAge": "3 days",
+  "commitMessageAction": "actualizar",
+  "commitMessageTopic": "{{depName}}",
+  "labels": ["dependencias"],
+  "packageRules": [
+    {
+      "description": "Automerge solo de parches, con CI en verde (ADR 0015).",
+      "matchUpdateTypes": ["patch", "pin", "digest"],
+      "automerge": true
+    },
+    {
+      "description": "TypeScript 7 espera a que typescript-eslint lo soporte.",
+      "matchPackageNames": ["typescript"],
+      "allowedVersions": "<6.1"
+    },
+    {
+      "description": "postgres-interval va con la versión que usa pg-types.",
+      "matchPackageNames": ["postgres-interval"],
+      "enabled": false
+    },
+    {
+      "description": "Postgres queda en 16 (ADR 0005).",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["postgis/postgis"],
+      "allowedVersions": "/^16-/"
+    },
+    {
+      "groupName": "Android: Kotlin, KSP y Compose",
+      "matchPackageNames": [
+        "org.jetbrains.kotlin*",
+        "com.google.devtools.ksp*",
+        "androidx.compose*"
+      ]
+    },
+    { "groupName": "Android: AGP", "matchPackageNames": ["com.android.*"] },
+    { "groupName": "Storybook", "matchPackageNames": ["storybook", "@storybook/*"] },
+    { "groupName": "Next.js", "matchPackageNames": ["next", "@next/*"] },
+    {
+      "groupName": "typescript-eslint",
+      "matchPackageNames": ["typescript-eslint", "@typescript-eslint/*"]
+    },
+    { "groupName": "Vitest", "matchPackageNames": ["vitest", "@vitest/*"] },
+    { "groupName": "Playwright", "matchPackageNames": ["@playwright/test", "playwright"] }
+  ]
+}

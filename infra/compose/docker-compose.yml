@@ -1,0 +1,38 @@
+# Ambiente de dev (ADR 0013). `pnpm dev` levanta postgres y caddy acá y corre api, worker y web
+# en el host con recarga en caliente. `pnpm dev:docker` levanta todo en contenedores.
+name: canchitas-dev
+
+services:
+  postgres:
+    build: ../postgres
+    image: canchitas-postgres:dev
+    environment:
+      POSTGRES_USER: postgres
+      # Solo dev: sin contraseña para el superusuario y el puerto solo en la máquina local.
+      # Los roles de la app sí usan contraseña (scripts/src/db.ts).
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - '127.0.0.1:5433:5432'
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      - ../../db:/db
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -h 127.0.0.1 -U postgres -d canchitas']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  caddy:
+    image: caddy:2.11.4-alpine
+    ports:
+      - '8080:8080'
+    environment:
+      API_UPSTREAM: ${API_UPSTREAM:-host.docker.internal:3001}
+      WEB_UPSTREAM: ${WEB_UPSTREAM:-host.docker.internal:3000}
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    volumes:
+      - ../caddy/Caddyfile.dev:/etc/caddy/Caddyfile:ro
+
+volumes:
+  postgres:

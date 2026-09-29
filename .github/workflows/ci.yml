@@ -1,0 +1,187 @@
+# CI de Canchitas (ADR 0013, ADR 0014, ADR 0015). Corre solo lo afectado por cada cambio.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cambios:
+    runs-on: ubuntu-24.04
+    outputs:
+      typescript: ${{ steps.filtro.outputs.typescript }}
+      base: ${{ steps.filtro.outputs.base }}
+      android: ${{ steps.filtro.outputs.android }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
+        id: filtro
+        with:
+          filters: |
+            comun: &comun
+              - package.json
+              - pnpm-lock.yaml
+              - pnpm-workspace.yaml
+              - turbo.json
+              - .nvmrc
+              - .github/**
+            typescript:
+              - *comun
+              - apps/api/**
+              - apps/web/**
+              - packages/**
+              - scripts/**
+              - contract/**
+              - docs/design-system/**
+              - infra/compose/**
+              - infra/caddy/**
+            base:
+              - *comun
+              - db/**
+              - infra/postgres/**
+              - scripts/src/db.ts
+              - apps/api/src/shared/db/**
+            android:
+              - *comun
+              - apps/android/**
+              - contract/**
+              - docs/design-system/**
+
+  commits:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/preparar-node
+      - run: pnpm exec commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
+
+  typescript:
+    needs: cambios
+    if: needs.cambios.outputs.typescript == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/preparar-node
+      - name: Formato
+        run: pnpm format:check
+      - name: Tokens al día y contraste AA (ADR 0017, RNF-019)
+        run: pnpm tokens:check
+      - name: Contrato y clientes al día (ADR 0007)
+        run: |
+          pnpm generate
+          git diff --exit-code -- contract apps/web/src/lib/api apps/web/src/styles
+      - name: Lint (ESLint y dependency-cruiser)
+        run: pnpm lint
+      - name: Tipos
+        run: pnpm typecheck
+      - name: Tests de la API (Vitest y Testcontainers)
+        run: pnpm --filter @canchitas/api test
+
+  contrato:
+    needs: cambios
+    if: github.event_name == 'pull_request' && needs.cambios.outputs.typescript == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Cambios incompatibles del contrato (oasdiff)
+        run: |
+          base=${{ github.event.pull_request.base.sha }}
+          if ! git cat-file -e "$base:contract/openapi.json" 2>/dev/null; then
+            echo "La rama base todavía no tiene contrato: no hay contra qué comparar."
+            exit 0
+          fi
+          git show "$base:contract/openapi.json" > "$RUNNER_TEMP/base.json"
+          docker run --rm -v "$RUNNER_TEMP:/base" -v "$PWD/contract:/head" tufin/oasdiff:v1.32.1 \
+            breaking /base/base.json /head/openapi.json --fail-on ERR
+
+  base-de-datos:
+    needs: cambios
+    if: needs.cambios.outputs.base == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/preparar-node
+      - run: pnpm db:up
+      - name: Migraciones y schema.sql al día
+        run: |
+          pnpm db:migrate
+          git diff --exit-code -- db/schema.sql
+      - name: Ida y vuelta de la última migración
+        run: |
+          pnpm db:rollback
+          pnpm db:migrate
+      - name: Tests pgTAP
+        run: pnpm db:test
+      - name: squawk y convención de rol
+        run: pnpm db:lint
+      - name: Tipos de Kysely al día
+        run: pnpm --filter @canchitas/api db:types:check
+
+  web:
+    needs: cambios
+    if: needs.cambios.outputs.typescript == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/preparar-node
+      - run: pnpm --filter @canchitas/web exec playwright install --with-deps chromium
+      - uses: ./.github/actions/levantar-stack
+      - name: Build y E2E con axe contra el stack local
+        working-directory: apps/web
+        run: |
+          pnpm build
+          nohup pnpm start > "$RUNNER_TEMP/web.log" 2>&1 &
+          pnpm e2e
+      - name: Storybook y tests visuales (en la imagen de Playwright, como en local)
+        working-directory: apps/web
+        run: |
+          pnpm build-storybook
+          pnpm test:visual
+      - if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: playwright-report
+          path: apps/web/playwright-report
+
+  android:
+    needs: cambios
+    if: needs.cambios.outputs.android == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
+        with:
+          packages: platforms;android-37.0 build-tools;37.0.0
+      - uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
+      - uses: ./.github/actions/preparar-node
+      - uses: ./.github/actions/levantar-stack
+      - name: ktlint, detekt, Android Lint, tests, Roborazzi y release con R8
+        working-directory: apps/android
+        env:
+          # SaludContraApiLocalTest: la app contra la API local (criterio de hecho de M0).
+          CANCHITAS_API_URL: http://localhost:8080/
+        run: ./gradlew ktlintCheck detekt lint testDebugUnitTest verifyRoborazziDebug assembleRelease
+      - if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: android-reportes
+          path: |
+            apps/android/**/build/reports
+            apps/android/**/build/outputs/roborazzi
+            apps/android/app/build/outputs/salud_contra_api_local.png

@@ -1,0 +1,8 @@
+# Secretos cifrados en el repo con SOPS + age (ADR 0013). Nunca en claro ni en variables de CI sueltas.
+# Van en infra/secretos/<ambiente>.enc.env y se descifran en el deploy.
+#
+# Falta la clave pública age de quien administra y la del servidor: se agregan en M1, con el primer
+# secreto real (el deploy a staging). En dev no hay secretos: ver apps/api/dev.env.
+creation_rules:
+  - path_regex: ^infra/secretos/.*\.enc\.(env|yaml|json)$
+    # age: age1…,age1…

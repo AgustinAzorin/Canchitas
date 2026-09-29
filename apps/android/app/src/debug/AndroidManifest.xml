@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Solo en debug: la API local es http (infra/compose). En release todo va por HTTPS (RNF-010). -->
+    <application android:networkSecurityConfig="@xml/network_security_config" />
+</manifest>
