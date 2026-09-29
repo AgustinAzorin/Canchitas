@@ -52,8 +52,15 @@ data class AccionesDeIngreso(
 )
 
 @Composable
-fun IngresoScreen(uiState: IngresoUiState, acciones: AccionesDeIngreso, modifier: Modifier = Modifier) {
-    MarcoDeCuenta(titulo = stringResource(R.string.feature_cuentas_ingreso_titulo), modifier = modifier) {
+fun IngresoScreen(
+    uiState: IngresoUiState,
+    acciones: AccionesDeIngreso,
+    modifier: Modifier = Modifier
+) {
+    MarcoDeCuenta(
+        titulo = stringResource(R.string.feature_cuentas_ingreso_titulo),
+        modifier = modifier
+    ) {
         val estado = uiState as? IngresoUiState.Editando ?: IngresoUiState.Editando(enviando = true)
         Column(verticalArrangement = Arrangement.spacedBy(Spacing.md)) {
             estado.error?.let { Aviso(TipoDeAviso.Error, stringResource(mensajeDe(it))) }
@@ -79,7 +86,10 @@ fun IngresoScreen(uiState: IngresoUiState, acciones: AccionesDeIngreso, modifier
                 onClick = acciones.onEnviar
             )
             Enlace(stringResource(R.string.feature_cuentas_ingreso_olvido), acciones.onRecuperar)
-            Enlace(stringResource(R.string.feature_cuentas_ingreso_crear_cuenta), acciones.onRegistrarse)
+            Enlace(
+                stringResource(R.string.feature_cuentas_ingreso_crear_cuenta),
+                acciones.onRegistrarse
+            )
         }
     }
 }

@@ -45,6 +45,7 @@ class CuentaViewModel @Inject constructor(private val cuentas: CuentasRepository
     val uiState: StateFlow<CuentaUiState> = combine(cuentas.sesion, acciones) { sesion, acciones ->
         when (sesion) {
             Sesion.SinSesion -> CuentaUiState.SinSesion
+
             is Sesion.Iniciada -> CuentaUiState.ConSesion(
                 cuenta = sesion.cuenta,
                 cerrando = acciones.cerrando,
@@ -78,7 +79,11 @@ class CuentaViewModel @Inject constructor(private val cuentas: CuentasRepository
             acciones.update {
                 when (resultado) {
                     is Resultado.Exito -> it.copy(reenvio = EstadoDeReenvio.Enviado)
-                    is Resultado.Fallo -> it.copy(reenvio = EstadoDeReenvio.Inicial, error = resultado.error)
+
+                    is Resultado.Fallo -> it.copy(
+                        reenvio = EstadoDeReenvio.Inicial,
+                        error = resultado.error
+                    )
                 }
             }
         }

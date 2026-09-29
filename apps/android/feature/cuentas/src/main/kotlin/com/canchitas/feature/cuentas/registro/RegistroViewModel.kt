@@ -54,8 +54,7 @@ class RegistroViewModel @Inject constructor(private val cuentas: CuentasReposito
     }
 
     fun onEnviar() {
-        val actual = estado.value as? RegistroUiState.Editando ?: return
-        if (actual.enviando) return
+        val actual = (estado.value as? RegistroUiState.Editando)?.takeIf { !it.enviando } ?: return
         val errores = validar(actual.formulario)
         val fecha = actual.formulario.fechaNacimiento
         if (errores.isNotEmpty() || fecha == null) {
@@ -85,7 +84,11 @@ class RegistroViewModel @Inject constructor(private val cuentas: CuentasReposito
         viewModelScope.launch {
             val resultado = cuentas.reenviarVerificacion(listo.email)
             estado.value = listo.copy(
-                reenvio = if (resultado is Resultado.Exito) EstadoDeReenvio.Enviado else EstadoDeReenvio.Inicial
+                reenvio = if (resultado is Resultado.Exito) {
+                    EstadoDeReenvio.Enviado
+                } else {
+                    EstadoDeReenvio.Inicial
+                }
             )
         }
     }
@@ -96,14 +99,30 @@ class RegistroViewModel @Inject constructor(private val cuentas: CuentasReposito
 
     private fun validar(formulario: FormularioDeRegistro): Map<CampoDeRegistro, Int> = buildMap {
         Validacion.email(formulario.email)?.let { put(CampoDeRegistro.Email, it) }
-        Validacion.contrasenaNueva(formulario.contrasena)?.let { put(CampoDeRegistro.Contrasena, it) }
-        Validacion.nombreDeUsuario(formulario.nombreUsuario)?.let { put(CampoDeRegistro.NombreUsuario, it) }
-        if (formulario.fechaNacimiento == null) put(CampoDeRegistro.FechaNacimiento, R.string.feature_cuentas_obligatorio)
-        if (!formulario.aceptaPrivacidad) put(CampoDeRegistro.Privacidad, R.string.feature_cuentas_validacion_privacidad)
+        Validacion.contrasenaNueva(formulario.contrasena)?.let {
+            put(CampoDeRegistro.Contrasena, it)
+        }
+        Validacion.nombreDeUsuario(formulario.nombreUsuario)?.let {
+            put(CampoDeRegistro.NombreUsuario, it)
+        }
+        if (formulario.fechaNacimiento ==
+            null
+        ) {
+            put(CampoDeRegistro.FechaNacimiento, R.string.feature_cuentas_obligatorio)
+        }
+        if (!formulario.aceptaPrivacidad) {
+            put(
+                CampoDeRegistro.Privacidad,
+                R.string.feature_cuentas_validacion_privacidad
+            )
+        }
     }
 
     /** Los errores que corresponden a un campo se muestran en el campo; el resto, arriba. */
-    private fun conErrorDeApi(actual: RegistroUiState.Editando, error: ErrorDeApi): RegistroUiState.Editando {
+    private fun conErrorDeApi(
+        actual: RegistroUiState.Editando,
+        error: ErrorDeApi
+    ): RegistroUiState.Editando {
         val campo = (error as? ErrorDeApi.Api)?.codigo?.let(CAMPO_DEL_ERROR::get)
         return if (campo == null) {
             actual.copy(enviando = false, error = error)

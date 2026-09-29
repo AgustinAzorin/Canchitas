@@ -8,6 +8,9 @@ import com.google.crypto.tink.aead.AeadConfig
 import com.google.crypto.tink.aead.PredefinedAeadParameters
 import java.io.File
 import java.nio.file.Files
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertArrayEquals
@@ -32,10 +35,14 @@ class SesionLocalTest {
             .getPrimitive(RegistryConfiguration.get(), Aead::class.java)
     }
 
-    private fun TestScope.sesionLocal(archivo: File, conCifrador: Cifrador = cifrador) = SesionLocal(
+    private fun TestScope.sesionLocal(
+        archivo: File,
+        conCifrador: Cifrador = cifrador,
+        scope: CoroutineScope = backgroundScope
+    ) = SesionLocal(
         DataStoreFactory.create(
             serializer = SerializadorDeSesion(conCifrador),
-            scope = backgroundScope,
+            scope = scope,
             produceFile = { archivo }
         )
     )
@@ -46,7 +53,10 @@ class SesionLocalTest {
     @Test
     fun `RNF-012 - la sesion se guarda y sobrevive a reabrir la app`() = runTest {
         val archivo = archivoNuevo()
-        sesionLocal(archivo).guardar(sesion)
+        // Cerrar la app: el primer DataStore se cancela antes de abrir el archivo otra vez.
+        val primeraApertura = CoroutineScope(backgroundScope.coroutineContext + Job())
+        sesionLocal(archivo, scope = primeraApertura).guardar(sesion)
+        primeraApertura.cancel()
 
         val reabierta = sesionLocal(archivo)
 

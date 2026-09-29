@@ -9,4 +9,5 @@ dependencies {
     implementation(projects.core.datastore)
     implementation(projects.core.network)
     testImplementation(libs.turbine)
+    testImplementation(libs.androidx.datastore)
 }

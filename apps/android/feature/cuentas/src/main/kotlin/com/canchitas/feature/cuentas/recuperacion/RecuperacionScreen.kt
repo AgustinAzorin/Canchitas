@@ -45,7 +45,10 @@ fun RecuperacionScreen(
     onVolver: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    MarcoDeCuenta(titulo = stringResource(R.string.feature_cuentas_recuperacion_titulo), modifier = modifier) {
+    MarcoDeCuenta(
+        titulo = stringResource(R.string.feature_cuentas_recuperacion_titulo),
+        modifier = modifier
+    ) {
         Column(verticalArrangement = Arrangement.spacedBy(Spacing.md)) {
             Text(
                 stringResource(R.string.feature_cuentas_recuperacion_explicacion),
@@ -53,7 +56,10 @@ fun RecuperacionScreen(
             )
             when (uiState) {
                 RecuperacionUiState.Enviado ->
-                    Aviso(TipoDeAviso.Info, stringResource(R.string.feature_cuentas_recuperacion_enviado))
+                    Aviso(
+                        TipoDeAviso.Info,
+                        stringResource(R.string.feature_cuentas_recuperacion_enviado)
+                    )
 
                 is RecuperacionUiState.Editando -> {
                     uiState.error?.let { Aviso(TipoDeAviso.Error, stringResource(mensajeDe(it))) }

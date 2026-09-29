@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,7 +48,10 @@ fun CuentaSection(
     onReenviar: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Spacing.md)) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(Spacing.md)
+    ) {
         when (uiState) {
             CuentaUiState.Loading, CuentaUiState.SinSesion -> {
                 val descripcion = stringResource(R.string.feature_cuentas_consultando)
@@ -65,7 +69,11 @@ fun CuentaSection(
 }
 
 @Composable
-private fun ConSesion(estado: CuentaUiState.ConSesion, onCerrarSesion: () -> Unit, onReenviar: () -> Unit) {
+private fun ConSesion(
+    estado: CuentaUiState.ConSesion,
+    onCerrarSesion: () -> Unit,
+    onReenviar: () -> Unit
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -100,7 +108,8 @@ private fun ConSesion(estado: CuentaUiState.ConSesion, onCerrarSesion: () -> Uni
                 BotonSecundario(
                     texto = stringResource(R.string.feature_cuentas_reenviar),
                     onClick = onReenviar,
-                    cargando = estado.reenvio == EstadoDeReenvio.Enviando
+                    cargando = estado.reenvio == EstadoDeReenvio.Enviando,
+                    colorDelContenido = LocalContentColor.current
                 )
             }
         }

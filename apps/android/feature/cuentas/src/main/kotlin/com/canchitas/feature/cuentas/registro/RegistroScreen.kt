@@ -73,8 +73,15 @@ data class AccionesDeRegistro(
 )
 
 @Composable
-fun RegistroScreen(uiState: RegistroUiState, acciones: AccionesDeRegistro, modifier: Modifier = Modifier) {
-    MarcoDeCuenta(titulo = stringResource(R.string.feature_cuentas_registro_titulo), modifier = modifier) {
+fun RegistroScreen(
+    uiState: RegistroUiState,
+    acciones: AccionesDeRegistro,
+    modifier: Modifier = Modifier
+) {
+    MarcoDeCuenta(
+        titulo = stringResource(R.string.feature_cuentas_registro_titulo),
+        modifier = modifier
+    ) {
         when (uiState) {
             is RegistroUiState.Editando -> Formulario(uiState, acciones)
             is RegistroUiState.Listo -> Listo(uiState, acciones)
@@ -131,15 +138,27 @@ private fun Formulario(estado: RegistroUiState.Editando, acciones: AccionesDeReg
             cargando = estado.enviando,
             onClick = acciones.onEnviar
         )
-        Enlace(stringResource(R.string.feature_cuentas_registro_ya_tenes_cuenta), acciones.onIngresar)
+        Enlace(
+            stringResource(R.string.feature_cuentas_registro_ya_tenes_cuenta),
+            acciones.onIngresar
+        )
     }
 }
 
 @Composable
-private fun Privacidad(aceptada: Boolean, error: String?, onCambio: (Boolean) -> Unit, onVer: () -> Unit) {
+private fun Privacidad(
+    aceptada: Boolean,
+    error: String?,
+    onCambio: (Boolean) -> Unit,
+    onVer: () -> Unit
+) {
     Column {
         FilaCentrada(
-            modifier = Modifier.toggleable(value = aceptada, role = Role.Checkbox, onValueChange = onCambio)
+            modifier = Modifier.toggleable(
+                value = aceptada,
+                role = Role.Checkbox,
+                onValueChange = onCambio
+            )
         ) {
             Checkbox(checked = aceptada, onCheckedChange = null)
             Text(
@@ -149,7 +168,11 @@ private fun Privacidad(aceptada: Boolean, error: String?, onCambio: (Boolean) ->
             )
         }
         error?.let {
-            Text(it, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.error)
+            Text(
+                it,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.error
+            )
         }
         Enlace(stringResource(R.string.feature_cuentas_registro_ver_privacidad), onVer)
     }
@@ -158,16 +181,24 @@ private fun Privacidad(aceptada: Boolean, error: String?, onCambio: (Boolean) ->
 /** Fecha de nacimiento con el selector de Material 3; se muestra como dd/mm/aaaa. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CampoDeFecha(fecha: String?, error: String?, habilitado: Boolean, onElegir: (String) -> Unit) {
+private fun CampoDeFecha(
+    fecha: String?,
+    error: String?,
+    habilitado: Boolean,
+    onElegir: (String) -> Unit
+) {
     var abierto by remember { mutableStateOf(false) }
-    Row(verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+    Row(
+        verticalAlignment = Alignment.Top,
+        horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
+    ) {
         CampoDeTexto(
             valor = fecha?.let(::formatoLocal).orEmpty(),
             onCambio = {},
             etiqueta = stringResource(R.string.feature_cuentas_campo_fecha_nacimiento),
             ayuda = stringResource(R.string.feature_cuentas_ayuda_fecha_nacimiento),
             error = error,
-            habilitado = false,
+            soloLectura = true,
             modifier = Modifier.weight(1f)
         )
         BotonSecundario(
@@ -186,13 +217,19 @@ private fun CampoDeFecha(fecha: String?, error: String?, habilitado: Boolean, on
             confirmButton = {
                 TextButton(onClick = {
                     estado.selectedDateMillis?.let { milis ->
-                        onElegir(Instant.fromEpochMilliseconds(milis).toLocalDateTime(TimeZone.UTC).date.toString())
+                        onElegir(
+                            Instant.fromEpochMilliseconds(
+                                milis
+                            ).toLocalDateTime(TimeZone.UTC).date.toString()
+                        )
                     }
                     abierto = false
                 }) { Text(stringResource(R.string.feature_cuentas_aceptar)) }
             },
             dismissButton = {
-                TextButton(onClick = { abierto = false }) { Text(stringResource(R.string.feature_cuentas_cancelar)) }
+                TextButton(onClick = {
+                    abierto = false
+                }) { Text(stringResource(R.string.feature_cuentas_cancelar)) }
             }
         ) { DatePicker(state = estado) }
     }

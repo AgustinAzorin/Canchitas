@@ -1,6 +1,7 @@
 package com.canchitas.feature.cuentas.componentes
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -73,7 +75,8 @@ internal fun CampoDeTexto(
     ayuda: String? = null,
     error: String? = null,
     tipo: KeyboardType = KeyboardType.Text,
-    habilitado: Boolean = true
+    habilitado: Boolean = true,
+    soloLectura: Boolean = false
 ) {
     val esContrasena = tipo == KeyboardType.Password
     OutlinedTextField(
@@ -83,20 +86,27 @@ internal fun CampoDeTexto(
             .fillMaxWidth()
             .semantics { if (error != null) error(error) },
         enabled = habilitado,
+        readOnly = soloLectura,
         label = { Text(etiqueta) },
         supportingText = (error ?: ayuda)?.let { texto -> { Text(texto) } },
         isError = error != null,
         singleLine = true,
         shape = MaterialTheme.shapes.medium,
         textStyle = MaterialTheme.typography.bodyMedium,
-        visualTransformation = if (esContrasena) PasswordVisualTransformation() else VisualTransformation.None,
+        visualTransformation =
+            if (esContrasena) PasswordVisualTransformation() else VisualTransformation.None,
         keyboardOptions = KeyboardOptions(keyboardType = tipo, autoCorrectEnabled = false)
     )
 }
 
 /** Botón primario de pie de formulario: 48 dp, ancho completo, spinner mientras envía. */
 @Composable
-internal fun BotonPrincipal(texto: String, cargando: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
+internal fun BotonPrincipal(
+    texto: String,
+    cargando: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Button(
         onClick = onClick,
         enabled = !cargando,
@@ -123,13 +133,23 @@ internal fun BotonSecundario(
     texto: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    cargando: Boolean = false
+    cargando: Boolean = false,
+    /** Dentro de un Aviso, el botón toma el color del texto del aviso. */
+    colorDelContenido: Color? = null
 ) {
     OutlinedButton(
         onClick = onClick,
         enabled = !cargando,
         shape = MaterialTheme.shapes.medium,
-        modifier = modifier.heightIn(min = 48.dp)
+        modifier = modifier.heightIn(min = 48.dp),
+        colors = if (colorDelContenido == null) {
+            ButtonDefaults.outlinedButtonColors()
+        } else {
+            ButtonDefaults.outlinedButtonColors(contentColor = colorDelContenido)
+        },
+        border =
+            colorDelContenido?.let { BorderStroke(1.dp, it) }
+                ?: ButtonDefaults.outlinedButtonBorder(!cargando)
     ) {
         if (cargando) {
             CircularProgressIndicator(
@@ -146,7 +166,11 @@ internal fun BotonSecundario(
 /** Link de navegación: texto, no botón relleno (GUIDELINES, Button). */
 @Composable
 internal fun Enlace(texto: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    TextButton(onClick = onClick, shape = MaterialTheme.shapes.medium, modifier = modifier.heightIn(min = 48.dp)) {
+    TextButton(
+        onClick = onClick,
+        shape = MaterialTheme.shapes.medium,
+        modifier = modifier.heightIn(min = 48.dp)
+    ) {
         Text(texto, style = MaterialTheme.typography.labelLarge)
     }
 }
@@ -164,8 +188,19 @@ internal fun Aviso(
     val colores = CanchitasTheme.extendedColors
     val (fondo, frente, icono) = when (tipo) {
         TipoDeAviso.Info -> Triple(colores.info, colores.infoForeground, CanchitasIcons.Info)
-        TipoDeAviso.Exito -> Triple(colores.success, colores.successForeground, CanchitasIcons.CheckCircle)
-        TipoDeAviso.Advertencia -> Triple(colores.warning, colores.warningForeground, CanchitasIcons.Warning)
+
+        TipoDeAviso.Exito -> Triple(
+            colores.success,
+            colores.successForeground,
+            CanchitasIcons.CheckCircle
+        )
+
+        TipoDeAviso.Advertencia -> Triple(
+            colores.warning,
+            colores.warningForeground,
+            CanchitasIcons.Warning
+        )
+
         TipoDeAviso.Error -> Triple(
             MaterialTheme.colorScheme.error,
             MaterialTheme.colorScheme.onError,
@@ -192,7 +227,10 @@ private fun ContenidoDeAviso(
             .fillMaxWidth()
             .semantics { liveRegion = LiveRegionMode.Polite }
     ) {
-        Row(modifier = Modifier.padding(Spacing.md), horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+        Row(
+            modifier = Modifier.padding(Spacing.md),
+            horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
+        ) {
             Icon(
                 painter = painterResource(icono),
                 contentDescription = null,

@@ -14,8 +14,14 @@ import com.canchitas.feature.cuentas.componentes.TipoDeAviso
 /** RNF-018: la política se puede leer antes de aceptarla. Texto provisorio hasta M9. */
 @Composable
 fun PrivacidadScreen(onVolver: () -> Unit, modifier: Modifier = Modifier) {
-    MarcoDeCuenta(titulo = stringResource(R.string.feature_cuentas_privacidad_titulo), modifier = modifier) {
-        Aviso(TipoDeAviso.Advertencia, stringResource(R.string.feature_cuentas_privacidad_provisoria))
+    MarcoDeCuenta(
+        titulo = stringResource(R.string.feature_cuentas_privacidad_titulo),
+        modifier = modifier
+    ) {
+        Aviso(
+            TipoDeAviso.Advertencia,
+            stringResource(R.string.feature_cuentas_privacidad_provisoria)
+        )
         listOf(
             R.string.feature_cuentas_privacidad_1,
             R.string.feature_cuentas_privacidad_2,

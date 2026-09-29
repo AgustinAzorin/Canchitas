@@ -27,6 +27,10 @@ class SerializadorDeSesion(private val cifrador: Cifrador) : Serializer<ArchivoD
     }
 
     override suspend fun writeTo(t: ArchivoDeSesion, output: OutputStream) {
-        output.write(cifrador.cifrar(json.encodeToString(ArchivoDeSesion.serializer(), t).encodeToByteArray()))
+        output.write(
+            cifrador.cifrar(
+                json.encodeToString(ArchivoDeSesion.serializer(), t).encodeToByteArray()
+            )
+        )
     }
 }

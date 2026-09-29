@@ -6,6 +6,7 @@ import com.canchitas.core.model.ErrorDeApi
 import com.canchitas.core.model.EstadoDeCuenta
 import com.canchitas.core.model.Resultado
 import com.canchitas.core.network.generated.apis.CuentasApi
+import com.canchitas.core.network.generated.models.EstadoDeCuenta as EstadoDeRed
 import com.canchitas.core.network.generated.models.SolicitudConEmailInput
 import com.canchitas.core.network.generated.models.SolicitudDeAltaInput
 import com.canchitas.core.network.generated.models.SolicitudDeInicioInput
@@ -36,8 +37,10 @@ interface CuentasNetworkDataSource {
 }
 
 /** Traduce cada respuesta a un Resultado; los errores se leen por el `type` del problem+json. */
-class RetrofitCuentasNetwork @Inject constructor(private val api: CuentasApi, private val json: Json) :
-    CuentasNetworkDataSource {
+class RetrofitCuentasNetwork @Inject constructor(
+    private val api: CuentasApi,
+    private val json: Json
+) : CuentasNetworkDataSource {
     override suspend fun registrar(datos: DatosDeAlta): Resultado<String> = llamar(
         {
             api.registrarCuenta(
@@ -52,9 +55,14 @@ class RetrofitCuentasNetwork @Inject constructor(private val api: CuentasApi, pr
         }
     ) { it.email }
 
-    override suspend fun iniciarSesion(email: String, contrasena: String): Resultado<SesionDeRed> = llamar(
-        { api.iniciarSesionConToken(SolicitudDeInicioInput(email = email, contrasena = contrasena)) }
-    ) { SesionDeRed(token = it.token, cuenta = it.cuenta.aModelo()) }
+    override suspend fun iniciarSesion(email: String, contrasena: String): Resultado<SesionDeRed> =
+        llamar(
+            {
+                api.iniciarSesionConToken(
+                    SolicitudDeInicioInput(email = email, contrasena = contrasena)
+                )
+            }
+        ) { SesionDeRed(token = it.token, cuenta = it.cuenta.aModelo()) }
 
     override suspend fun cuentaActual(): Resultado<Cuenta> =
         llamar({ api.consultarCuentaActual() }) { it.aModelo() }
@@ -73,16 +81,18 @@ class RetrofitCuentasNetwork @Inject constructor(private val api: CuentasApi, pr
             if (respuesta.isSuccessful) Resultado.Exito(Unit) else Resultado.Fallo(error(respuesta))
         }
 
-    private suspend fun <T, R> llamar(pedido: suspend () -> Response<T>, aValor: (T) -> R): Resultado<R> =
-        conRed {
-            val respuesta = pedido()
-            val cuerpo = respuesta.body()
-            when {
-                respuesta.isSuccessful && cuerpo != null -> Resultado.Exito(aValor(cuerpo))
-                respuesta.isSuccessful -> Resultado.Fallo(ErrorDeApi.Inesperado)
-                else -> Resultado.Fallo(error(respuesta))
-            }
+    private suspend fun <T, R> llamar(
+        pedido: suspend () -> Response<T>,
+        aValor: (T) -> R
+    ): Resultado<R> = conRed {
+        val respuesta = pedido()
+        val cuerpo = respuesta.body()
+        when {
+            respuesta.isSuccessful && cuerpo != null -> Resultado.Exito(aValor(cuerpo))
+            respuesta.isSuccessful -> Resultado.Fallo(ErrorDeApi.Inesperado)
+            else -> Resultado.Fallo(error(respuesta))
         }
+    }
 
     private suspend fun <R> conRed(bloque: suspend () -> Resultado<R>): Resultado<R> = try {
         bloque()
@@ -118,7 +128,7 @@ private fun com.canchitas.core.network.generated.models.Cuenta.aModelo() = Cuent
     email = email,
     nombreUsuario = nombreUsuario,
     estado = when (estado) {
-        com.canchitas.core.network.generated.models.EstadoDeCuenta.SIN_VERIFICAR -> EstadoDeCuenta.SinVerificar
-        com.canchitas.core.network.generated.models.EstadoDeCuenta.ACTIVA -> EstadoDeCuenta.Activa
+        EstadoDeRed.SIN_VERIFICAR -> EstadoDeCuenta.SinVerificar
+        EstadoDeRed.ACTIVA -> EstadoDeCuenta.Activa
     }
 )

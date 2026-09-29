@@ -39,16 +39,16 @@ object NetworkModule {
     @Singleton
     fun providesOkHttpClient(proveedorDeToken: ProveedorDeToken): OkHttpClient =
         OkHttpClient.Builder()
-        .addInterceptor(InterceptorDeSesion(proveedorDeToken))
-        .apply {
-            // Solo el método, la URL y el código: nunca cuerpos ni headers (RNF-017, ADR 0015).
-            if (BuildConfig.DEBUG) {
-                addInterceptor(
-                    HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC)
-                )
+            .addInterceptor(InterceptorDeSesion(proveedorDeToken))
+            .apply {
+                // Solo el método, la URL y el código: nunca cuerpos ni headers (RNF-017, ADR 0015).
+                if (BuildConfig.DEBUG) {
+                    addInterceptor(
+                        HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC)
+                    )
+                }
             }
-        }
-        .build()
+            .build()
 
     @Provides
     @Singleton

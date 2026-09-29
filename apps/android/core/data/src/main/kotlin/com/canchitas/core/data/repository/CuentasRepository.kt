@@ -61,6 +61,7 @@ internal class DefaultCuentasRepository @Inject constructor(
         val resultado = network.cuentaActual()
         when {
             resultado is Resultado.Exito -> local.guardar(resultado.valor.aGuardada(guardada.token))
+
             // La sesión venció (30 días sin uso) o se cerró desde otro lado.
             resultado == Resultado.Fallo(SIN_SESION) -> local.borrar()
         }
@@ -94,7 +95,8 @@ internal class DefaultCuentasRepository @Inject constructor(
 }
 
 /** El token que la red agrega a cada pedido (RNF-012). */
-internal class TokenDeSesionLocal @Inject constructor(private val local: SesionLocal) : ProveedorDeToken {
+internal class TokenDeSesionLocal @Inject constructor(private val local: SesionLocal) :
+    ProveedorDeToken {
     override fun tokenActual(): String? = local.tokenEnMemoria
 }
 

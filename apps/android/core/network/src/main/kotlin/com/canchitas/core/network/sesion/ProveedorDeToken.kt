@@ -14,7 +14,13 @@ class InterceptorDeSesion(private val proveedor: ProveedorDeToken) : Interceptor
         val token = proveedor.tokenActual()
         val pedido = chain.request()
         return chain.proceed(
-            if (token == null) pedido else pedido.newBuilder().header("Authorization", "Bearer $token").build()
+            if (token ==
+                null
+            ) {
+                pedido
+            } else {
+                pedido.newBuilder().header("Authorization", "Bearer $token").build()
+            }
         )
     }
 }

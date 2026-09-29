@@ -15,19 +15,22 @@ import com.canchitas.feature.cuentas.cuenta.CuentaRoute
 import com.canchitas.feature.salud.SaludRoute
 import kotlinx.serialization.Serializable
 
+/** Destino del inicio con sesión. */
 @Serializable
-data object InicioDestino
+data object Inicio
 
 /** Inicio con sesión: la cuenta (RF-004, RF-007) y el estado del servicio (M0). */
 fun NavGraphBuilder.inicioScreen() {
-    composable<InicioDestino> { Inicio() }
+    composable<Inicio> { PantallaDeInicio() }
 }
 
 @Composable
-private fun Inicio() {
+private fun PantallaDeInicio() {
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
-            CuentaRoute(modifier = Modifier.padding(start = Spacing.lg, end = Spacing.lg, top = Spacing.lg))
+            CuentaRoute(
+                modifier = Modifier.padding(start = Spacing.lg, end = Spacing.lg, top = Spacing.lg)
+            )
             SaludRoute()
         }
     }

@@ -39,15 +39,18 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-private fun CanchitasApp(conSesion: Boolean, navController: NavHostController = rememberNavController()) {
+private fun CanchitasApp(
+    conSesion: Boolean,
+    navController: NavHostController = rememberNavController()
+) {
     // RF-007 y RNF-012: si la sesión se cierra (o vence) se vuelve al ingreso sin dejar nada atrás.
     LaunchedEffect(conSesion) {
-        val destino: Any = if (conSesion) InicioDestino else IngresoDestino
+        val destino: Any = if (conSesion) Inicio else IngresoDestino
         navController.navigate(destino) { popUpTo(0) { inclusive = true } }
     }
     NavHost(
         navController = navController,
-        startDestination = if (conSesion) InicioDestino else IngresoDestino,
+        startDestination = if (conSesion) Inicio else IngresoDestino,
         modifier = Modifier.safeDrawingPadding()
     ) {
         cuentasGraph(navController, onIngresado = {})

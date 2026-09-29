@@ -7,7 +7,9 @@ import com.canchitas.core.model.ErrorDeApi
 @StringRes
 internal fun mensajeDe(error: ErrorDeApi): Int = when (error) {
     ErrorDeApi.SinConexion -> R.string.feature_cuentas_error_sin_conexion
+
     ErrorDeApi.Inesperado -> R.string.feature_cuentas_error_inesperado
+
     is ErrorDeApi.Api -> when (error.codigo) {
         "email-en-uso" -> R.string.feature_cuentas_error_email_en_uso
         "nombre-de-usuario-en-uso" -> R.string.feature_cuentas_error_nombre_en_uso
@@ -39,15 +41,24 @@ internal object Validacion {
     @StringRes
     fun contrasenaNueva(contrasena: String): Int? = when {
         contrasena.isEmpty() -> R.string.feature_cuentas_obligatorio
-        contrasena.length < CONTRASENA_MINIMA -> R.string.feature_cuentas_validacion_contrasena_corta
-        contrasena.length > CONTRASENA_MAXIMA -> R.string.feature_cuentas_validacion_contrasena_larga
+
+        contrasena.length < CONTRASENA_MINIMA ->
+            R.string.feature_cuentas_validacion_contrasena_corta
+
+        contrasena.length > CONTRASENA_MAXIMA ->
+            R.string.feature_cuentas_validacion_contrasena_larga
+
         else -> null
     }
 
     @StringRes
     fun nombreDeUsuario(nombre: String): Int? = when {
         nombre.isBlank() -> R.string.feature_cuentas_obligatorio
-        !formatoDeNombre.matches(nombre.trim()) -> R.string.feature_cuentas_validacion_nombre_usuario
+
+        !formatoDeNombre.matches(
+            nombre.trim()
+        ) -> R.string.feature_cuentas_validacion_nombre_usuario
+
         else -> null
     }
 }

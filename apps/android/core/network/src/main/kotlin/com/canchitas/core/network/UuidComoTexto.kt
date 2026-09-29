@@ -10,7 +10,8 @@ import kotlinx.serialization.encoding.Encoder
 
 /** Los modelos generados declaran los uuid como `@Contextual UUID`. */
 object UuidComoTexto : KSerializer<UUID> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("UUID", PrimitiveKind.STRING)
+    override val descriptor: SerialDescriptor =
+        PrimitiveSerialDescriptor("UUID", PrimitiveKind.STRING)
 
     override fun serialize(encoder: Encoder, value: UUID) = encoder.encodeString(value.toString())
 

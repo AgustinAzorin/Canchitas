@@ -32,10 +32,19 @@ fun NavGraphBuilder.cuentasGraph(navController: NavController, onIngresado: () -
     }
     composable<RegistroDestino> {
         RegistroRoute(
-            onIngresar = { navController.navigate(IngresoDestino) { popUpTo(IngresoDestino) { inclusive = true } } },
+            onIngresar = {
+                navController.navigate(IngresoDestino) {
+                    popUpTo(IngresoDestino) {
+                        inclusive =
+                            true
+                    }
+                }
+            },
             onVerPrivacidad = { navController.navigate(PrivacidadDestino) }
         )
     }
-    composable<RecuperacionDestino> { RecuperacionRoute(onVolver = { navController.popBackStack() }) }
+    composable<RecuperacionDestino> {
+        RecuperacionRoute(onVolver = { navController.popBackStack() })
+    }
     composable<PrivacidadDestino> { PrivacidadScreen(onVolver = { navController.popBackStack() }) }
 }

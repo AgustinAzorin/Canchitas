@@ -42,11 +42,15 @@ class IngresoViewModel @Inject constructor(private val cuentas: CuentasRepositor
     fun onContrasena(contrasena: String) = editar { it.copy(contrasena = contrasena) }
 
     fun onEnviar() {
-        val actual = estado.value as? IngresoUiState.Editando ?: return
-        if (actual.enviando) return
+        val actual = (estado.value as? IngresoUiState.Editando)?.takeIf { !it.enviando } ?: return
         val errores = buildMap {
             Validacion.email(actual.email)?.let { put(CampoDeIngreso.Email, it) }
-            if (actual.contrasena.isEmpty()) put(CampoDeIngreso.Contrasena, R.string.feature_cuentas_obligatorio)
+            if (actual.contrasena.isEmpty()) {
+                put(
+                    CampoDeIngreso.Contrasena,
+                    R.string.feature_cuentas_obligatorio
+                )
+            }
         }
         if (errores.isNotEmpty()) {
             estado.value = actual.copy(errores = errores, error = null)
@@ -54,11 +58,22 @@ class IngresoViewModel @Inject constructor(private val cuentas: CuentasRepositor
         }
         estado.value = actual.copy(errores = emptyMap(), error = null, enviando = true)
         viewModelScope.launch {
-            estado.value = when (val resultado = cuentas.iniciarSesion(actual.email.trim(), actual.contrasena)) {
-                is Resultado.Exito -> IngresoUiState.Ingresado
-                // La contraseña se borra después de un intento fallido.
-                is Resultado.Fallo -> actual.copy(contrasena = "", enviando = false, error = resultado.error)
-            }
+            estado.value =
+                when (
+                    val resultado = cuentas.iniciarSesion(
+                        actual.email.trim(),
+                        actual.contrasena
+                    )
+                ) {
+                    is Resultado.Exito -> IngresoUiState.Ingresado
+
+                    // La contraseña se borra después de un intento fallido.
+                    is Resultado.Fallo -> actual.copy(
+                        contrasena = "",
+                        enviando = false,
+                        error = resultado.error
+                    )
+                }
         }
     }
 

@@ -28,7 +28,8 @@ sealed interface RecuperacionUiState {
 
 /** RF-006: pedir el enlace para definir una contraseña nueva. */
 @HiltViewModel
-class RecuperacionViewModel @Inject constructor(private val cuentas: CuentasRepository) : ViewModel() {
+class RecuperacionViewModel @Inject constructor(private val cuentas: CuentasRepository) :
+    ViewModel() {
     private val estado = MutableStateFlow<RecuperacionUiState>(RecuperacionUiState.Editando())
     val uiState: StateFlow<RecuperacionUiState> = estado.asStateFlow()
 
@@ -37,8 +38,8 @@ class RecuperacionViewModel @Inject constructor(private val cuentas: CuentasRepo
     }
 
     fun onEnviar() {
-        val actual = estado.value as? RecuperacionUiState.Editando ?: return
-        if (actual.enviando) return
+        val actual =
+            (estado.value as? RecuperacionUiState.Editando)?.takeIf { !it.enviando } ?: return
         val error = Validacion.email(actual.email)
         if (error != null) {
             estado.value = actual.copy(errorDeCampo = error, error = null)
