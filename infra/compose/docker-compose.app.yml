@@ -10,8 +10,15 @@ services:
       DATABASE_URL: postgres://canchitas_api:canchitas_api@postgres:5432/canchitas
       PORT: '3001'
       APP_VERSION: dev-docker
+      AUTH_SECRETO: secreto-de-desarrollo-no-usar-en-produccion
+      URL_API: http://localhost:8080
+      URL_WEB: http://localhost:8080
+      SMTP_HOST: mailpit
+      SMTP_PUERTO: '1025'
     depends_on:
       postgres:
+        condition: service_healthy
+      mailpit:
         condition: service_healthy
     healthcheck:
       test:
