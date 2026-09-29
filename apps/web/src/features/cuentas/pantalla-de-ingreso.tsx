@@ -7,10 +7,11 @@ import { mensajes } from '@/messages/es-AR';
 
 import { detalleDeError, useIniciarSesion } from './consultas';
 import { FormularioDeIngreso } from './formulario-de-ingreso';
+import { destinoDespuesDeIngresar } from './invitacion-pendiente';
 import { Marco } from './marco';
 import { validarEmail, type Errores } from './validacion';
 
-export function PantallaDeIngreso() {
+export function PantallaDeIngreso({ invitacion }: { invitacion?: string | undefined }) {
   const router = useRouter();
   const iniciar = useIniciarSesion();
   const [email, setEmail] = useState('');
@@ -21,6 +22,7 @@ export function PantallaDeIngreso() {
       <FormularioDeIngreso
         key={email}
         email={email}
+        invitacion={invitacion}
         enviando={iniciar.isPending}
         erroresDeCampo={errores}
         error={iniciar.isError ? detalleDeError(iniciar.error) : undefined}
@@ -36,7 +38,7 @@ export function PantallaDeIngreso() {
           if (Object.keys(locales).length === 0) {
             iniciar.mutate(datos, {
               onSuccess: () => {
-                router.push('/');
+                router.push(destinoDespuesDeIngresar(invitacion));
               },
             });
           }

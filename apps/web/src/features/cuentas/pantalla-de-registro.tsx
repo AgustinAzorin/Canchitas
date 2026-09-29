@@ -15,7 +15,7 @@ import { Marco } from './marco';
 import { RegistroListo } from './registro-listo';
 import { validarRegistro, type Errores } from './validacion';
 
-export function PantallaDeRegistro() {
+export function PantallaDeRegistro({ invitacion }: { invitacion?: string | undefined }) {
   const registrar = useRegistrar();
   const reenviar = useReenviarVerificacion();
   const [valores, setValores] = useState<Partial<SolicitudDeAlta>>({});
@@ -27,6 +27,7 @@ export function PantallaDeRegistro() {
       <Marco titulo={mensajes.cuentas.registro.titulo}>
         <RegistroListo
           email={email}
+          invitacion={invitacion}
           reenvio={reenviar.isPending ? 'enviando' : reenviar.isSuccess ? 'enviado' : 'inicial'}
           onReenviar={() => {
             reenviar.mutate(email);
@@ -42,6 +43,7 @@ export function PantallaDeRegistro() {
         // Se vuelve a montar con los valores que se enviaron para no perderlos.
         key={JSON.stringify(valores)}
         valores={valores}
+        invitacion={invitacion}
         enviando={registrar.isPending}
         erroresDeCampo={errores}
         error={registrar.isError ? detalleDeError(registrar.error) : undefined}

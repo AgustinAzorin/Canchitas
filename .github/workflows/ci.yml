@@ -144,6 +144,9 @@ jobs:
           pnpm build
           nohup pnpm start > "$RUNNER_TEMP/web.log" 2>&1 &
           pnpm e2e
+        env:
+          # App Links con el keystore de debug del repo (RF-011); en staging y prod, la de release.
+          ANDROID_HUELLAS_SHA256: 48:1A:F3:55:A8:05:07:88:58:3C:F2:D4:3C:E4:00:44:0B:4E:E5:E2:0E:ED:24:B0:20:A7:17:98:47:B1:38:0E
       - name: Storybook y tests visuales (en la imagen de Playwright, como en local)
         working-directory: apps/web
         run: |

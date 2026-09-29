@@ -46,6 +46,9 @@ services:
       context: ../..
       dockerfile: apps/web/Dockerfile
     image: canchitas-web:dev
+    environment:
+      # App Links con el keystore de debug del repo (RF-011). Nunca en staging ni en prod.
+      ANDROID_HUELLAS_SHA256: 48:1A:F3:55:A8:05:07:88:58:3C:F2:D4:3C:E4:00:44:0B:4E:E5:E2:0E:ED:24:B0:20:A7:17:98:47:B1:38:0E
     depends_on:
       - api
 

@@ -7,6 +7,7 @@ import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { mensajes } from '@/messages/es-AR';
 
+import { hrefDeIngreso } from './invitacion-pendiente';
 import { claseDeLink } from './marco';
 
 const t = mensajes.cuentas;
@@ -14,10 +15,12 @@ const t = mensajes.cuentas;
 export interface RegistroListoProps {
   email: string;
   reenvio: 'inicial' | 'enviando' | 'enviado';
+  /** Token del link de invitación del que vino (RF-011), para volver a él. */
+  invitacion?: string | undefined;
   onReenviar: () => void;
 }
 
-export function RegistroListo({ email, reenvio, onReenviar }: RegistroListoProps) {
+export function RegistroListo({ email, reenvio, invitacion, onReenviar }: RegistroListoProps) {
   return (
     <section aria-labelledby="titulo-listo" className="flex flex-col gap-4">
       <h2 id="titulo-listo" className="text-h4">
@@ -28,7 +31,7 @@ export function RegistroListo({ email, reenvio, onReenviar }: RegistroListoProps
       <Button variante="outline" cargando={reenvio === 'enviando'} onClick={onReenviar}>
         {t.verificacion.reenviar}
       </Button>
-      <Link href="/ingresar" className={claseDeLink}>
+      <Link href={hrefDeIngreso(invitacion)} className={claseDeLink}>
         {t.registro.listoIngresar}
       </Link>
     </section>

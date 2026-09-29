@@ -5,61 +5,24 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { api, type components } from '@/lib/api/cliente';
+import { detalleDeError, esError, llamar, llamarConDatos, type ErrorDeApi } from '@/lib/api/llamar';
 
 export type Cuenta = components['schemas']['Cuenta'];
 export type SolicitudDeAlta = components['schemas']['SolicitudDeAltaInput'];
 
-/** Error que la pantalla muestra: el sufijo del `type` del problem+json, o falta de red. */
-export type ErrorDeCuentas =
-  { tipo: 'api'; codigo: string } | { tipo: 'sin-conexion' } | { tipo: 'inesperado' };
-
-const baseDeTipos = 'https://canchitas.app/errores/';
+export type ErrorDeCuentas = ErrorDeApi;
+export { detalleDeError };
 
 export const clavesDeCuentas = {
   actual: ['cuentas', 'actual'] as const,
 };
-
-class FallaDeCuentas extends Error {
-  constructor(readonly detalle: ErrorDeCuentas) {
-    super(detalle.tipo);
-  }
-}
-
-export function detalleDeError(error: unknown): ErrorDeCuentas {
-  return error instanceof FallaDeCuentas ? error.detalle : { tipo: 'inesperado' };
-}
-
-/** Llama a la API y convierte la respuesta de error en FallaDeCuentas. */
-async function llamar<T>(
-  pedido: () => Promise<{ data?: T; error?: { type: string }; response: Response }>,
-): Promise<T | undefined> {
-  let resultado;
-  try {
-    resultado = await pedido();
-  } catch {
-    throw new FallaDeCuentas({ tipo: 'sin-conexion' });
-  }
-  if (resultado.error !== undefined) {
-    const { type } = resultado.error;
-    throw new FallaDeCuentas(
-      type.startsWith(baseDeTipos)
-        ? { tipo: 'api', codigo: type.slice(baseDeTipos.length) }
-        : { tipo: 'inesperado' },
-    );
-  }
-  if (!resultado.response.ok) {
-    throw new FallaDeCuentas({ tipo: 'inesperado' });
-  }
-  return resultado.data;
-}
 
 /** La cuenta de la sesión, o `null` si no hay sesión. */
 export async function consultarCuentaActual(): Promise<Cuenta | null> {
   try {
     return (await llamar(() => api.GET('/v1/cuentas/yo'))) ?? null;
   } catch (error) {
-    const detalle = detalleDeError(error);
-    if (detalle.tipo === 'api' && detalle.codigo === 'sin-sesion') {
+    if (esError(error, 'sin-sesion')) {
       return null;
     }
     throw error;
@@ -76,13 +39,7 @@ export function useCuentaActual() {
 
 export function useRegistrar() {
   return useMutation({
-    mutationFn: async (body: SolicitudDeAlta) => {
-      const creada = await llamar(() => api.POST('/v1/cuentas', { body }));
-      if (creada === undefined) {
-        throw new FallaDeCuentas({ tipo: 'inesperado' });
-      }
-      return creada;
-    },
+    mutationFn: (body: SolicitudDeAlta) => llamarConDatos(() => api.POST('/v1/cuentas', { body })),
   });
 }
 
