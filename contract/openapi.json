@@ -508,7 +508,7 @@
         "tags": [
           "cuentas"
         ],
-        "description": "RF-004 y RF-005. Dice si hay sesión y si la cuenta está verificada.",
+        "description": "RF-004, RF-005 y RNF-012. Dice si hay sesión y si la cuenta está verificada. Usarla corre el vencimiento de la sesión (en la web, con una cookie nueva).",
         "security": [
           {
             "sesionWeb": []
