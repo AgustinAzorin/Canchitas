@@ -5,6 +5,7 @@ import com.canchitas.core.model.DatosDeAlta
 import com.canchitas.core.model.ErrorDeApi
 import com.canchitas.core.model.EstadoDeCuenta
 import com.canchitas.core.model.Resultado
+import com.canchitas.core.network.LlamadorDeApi
 import com.canchitas.core.network.di.NetworkModule
 import com.canchitas.core.network.generated.apis.CuentasApi
 import com.canchitas.core.network.sesion.InterceptorDeSesion
@@ -29,7 +30,8 @@ class RetrofitCuentasNetworkTest {
         servidor.start()
         val cliente = OkHttpClient.Builder().addInterceptor(InterceptorDeSesion { token }).build()
         val retrofit = NetworkModule.crearRetrofit(servidor.url("/").toString(), json, cliente)
-        network = RetrofitCuentasNetwork(retrofit.create(CuentasApi::class.java), json)
+        network =
+            RetrofitCuentasNetwork(retrofit.create(CuentasApi::class.java), LlamadorDeApi(json))
     }
 
     @After

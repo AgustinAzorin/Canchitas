@@ -11,13 +11,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.canchitas.core.designsystem.theme.Spacing
+import com.canchitas.core.ui.Aviso
+import com.canchitas.core.ui.BotonPrincipal
+import com.canchitas.core.ui.CampoDeTexto
+import com.canchitas.core.ui.Enlace
+import com.canchitas.core.ui.MarcoDePantalla
+import com.canchitas.core.ui.TipoDeAviso
 import com.canchitas.feature.cuentas.R
-import com.canchitas.feature.cuentas.componentes.Aviso
-import com.canchitas.feature.cuentas.componentes.BotonPrincipal
-import com.canchitas.feature.cuentas.componentes.CampoDeTexto
-import com.canchitas.feature.cuentas.componentes.Enlace
-import com.canchitas.feature.cuentas.componentes.MarcoDeCuenta
-import com.canchitas.feature.cuentas.componentes.TipoDeAviso
 import com.canchitas.feature.cuentas.mensajeDe
 
 @Composable
@@ -26,6 +26,7 @@ fun IngresoRoute(
     onRegistrarse: () -> Unit,
     onRecuperar: () -> Unit,
     modifier: Modifier = Modifier,
+    conInvitacion: Boolean = false,
     viewModel: IngresoViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -39,7 +40,8 @@ fun IngresoRoute(
             onRegistrarse = onRegistrarse,
             onRecuperar = onRecuperar
         ),
-        modifier = modifier
+        modifier = modifier,
+        conInvitacion = conInvitacion
     )
 }
 
@@ -55,14 +57,19 @@ data class AccionesDeIngreso(
 fun IngresoScreen(
     uiState: IngresoUiState,
     acciones: AccionesDeIngreso,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    /** RN-27: se abrió un link de invitación sin sesión; nada del grupo se muestra acá. */
+    conInvitacion: Boolean = false
 ) {
-    MarcoDeCuenta(
+    MarcoDePantalla(
         titulo = stringResource(R.string.feature_cuentas_ingreso_titulo),
         modifier = modifier
     ) {
         val estado = uiState as? IngresoUiState.Editando ?: IngresoUiState.Editando(enviando = true)
         Column(verticalArrangement = Arrangement.spacedBy(Spacing.md)) {
+            if (conInvitacion) {
+                Aviso(TipoDeAviso.Info, stringResource(R.string.feature_cuentas_ingreso_invitacion))
+            }
             estado.error?.let { Aviso(TipoDeAviso.Error, stringResource(mensajeDe(it))) }
             CampoDeTexto(
                 valor = estado.email,

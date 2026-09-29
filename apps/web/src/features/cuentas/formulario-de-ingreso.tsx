@@ -10,6 +10,7 @@ import { TextField } from '@/components/ui/text-field';
 import { mensajes } from '@/messages/es-AR';
 
 import type { ErrorDeCuentas } from './consultas';
+import { hrefDeRegistro } from './invitacion-pendiente';
 import { claseDeLink } from './marco';
 import { textoDeError } from './textos';
 import type { Errores } from './validacion';
@@ -21,6 +22,8 @@ export interface FormularioDeIngresoProps {
   erroresDeCampo?: Errores<'email' | 'contrasena'>;
   error?: ErrorDeCuentas | undefined;
   email?: string;
+  /** Token del link de invitación del que vino (RF-011), para volver a él. */
+  invitacion?: string | undefined;
   onEnviar: (datos: { email: string; contrasena: string }) => void;
 }
 
@@ -29,6 +32,7 @@ export function FormularioDeIngreso({
   erroresDeCampo = {},
   error,
   email,
+  invitacion,
   onEnviar,
 }: FormularioDeIngresoProps) {
   function enviar(evento: SubmitEvent<HTMLFormElement>) {
@@ -71,7 +75,7 @@ export function FormularioDeIngreso({
       </Link>
       <p className="flex flex-wrap items-center gap-x-1 text-body-sm text-muted-foreground">
         {t.ingreso.sinCuenta}
-        <Link href="/registro" className={claseDeLink}>
+        <Link href={hrefDeRegistro(invitacion)} className={claseDeLink}>
           {t.ingreso.registrarse}
         </Link>
       </p>

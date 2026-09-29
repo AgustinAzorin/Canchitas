@@ -2,8 +2,8 @@
 
 | Campo | Valor |
 |---|---|
-| Versión | 1.0 |
-| Fecha | 2026-09-27 |
+| Versión | 1.1 |
+| Fecha | 2026-09-29 |
 | Autor | Agustin, con asistencia de Claude |
 | Estado | Borrador para revisión |
 | Norma de referencia | ISO/IEC/IEEE 29148:2018 |
@@ -13,6 +13,7 @@
 | Versión | Fecha | Cambios |
 |---|---|---|
 | 1.0 | 2026-09-27 | Versión inicial, surgida de la entrevista de relevamiento |
+| 1.1 | 2026-09-29 | RN-26 a RN-28: quién ve el link de invitación, qué muestra antes de unirse y quién puede volver a entrar por link (decisiones de Agustin al implementar RF-011 y RF-012) |
 
 ## 1. Introducción
 
@@ -1190,6 +1191,9 @@ No se relevaron requisitos de auditoría más allá de las métricas de uso (RF-
 | RN-23 | Solo el creador puede borrar un grupo; las estadísticas globales de los miembros conservan lo sumado en ese grupo. | — |
 | RN-24 | El precio de una cancha se muestra solo si pertenece a un complejo registrado. | Cancha no registrada: sin precio. |
 | RN-25 | Eventos que generan notificación: nueva votación; cierre de votación; partido confirmado; apertura de confirmación de un partido recurrente; recordatorios 24 h y 2 h antes; aviso de lista de espera; baja de un jugador (solo admins); resultado cargado; rechazo de aval (solo admins); votación de figura abierta; figura elegida; deuda pendiente; calificación o nota recibida; propuesta de cancha aprobada o rechazada; reclamo de complejo aprobado o rechazado; agregado a un grupo. | — |
+| RN-26 | Solo los admins de un grupo ven su link de invitación y, por lo tanto, lo comparten. | Un jugador sin rol de admin no ve el link; se lo pide a un admin. |
+| RN-27 | Al abrir un link de invitación, el nombre del grupo y la cantidad de miembros se muestran solo a quien tiene sesión iniciada. Sin sesión, se pide iniciar sesión o registrarse y después se vuelve al link. | Sin sesión: "Iniciá sesión o registrate para unirte". |
+| RN-28 | Quien salió de un grupo puede volver a unirse con el link vigente, como jugador. Quien fue expulsado no puede volver por link; solo si un admin lo agrega (RF-013). | Expulsado que abre el link: rechazo. |
 
 Estados de un partido:
 

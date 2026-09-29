@@ -22,11 +22,11 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.canchitas.core.designsystem.theme.Spacing
 import com.canchitas.core.model.EstadoDeCuenta
+import com.canchitas.core.ui.Aviso
+import com.canchitas.core.ui.BotonSecundario
+import com.canchitas.core.ui.TipoDeAviso
 import com.canchitas.feature.cuentas.EstadoDeReenvio
 import com.canchitas.feature.cuentas.R
-import com.canchitas.feature.cuentas.componentes.Aviso
-import com.canchitas.feature.cuentas.componentes.BotonSecundario
-import com.canchitas.feature.cuentas.componentes.TipoDeAviso
 import com.canchitas.feature.cuentas.mensajeDe
 
 /** Sección de la cuenta para el inicio: quién tiene la sesión, verificación y cierre de sesión. */

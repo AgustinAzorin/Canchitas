@@ -11,6 +11,7 @@ import { TextField } from '@/components/ui/text-field';
 import { mensajes } from '@/messages/es-AR';
 
 import type { ErrorDeCuentas, SolicitudDeAlta } from './consultas';
+import { hrefDeIngreso } from './invitacion-pendiente';
 import { claseDeLink } from './marco';
 import { textoDeError } from './textos';
 import type { Errores } from './validacion';
@@ -34,6 +35,8 @@ export interface FormularioDeRegistroProps {
   erroresDeCampo?: Errores<CampoDeAlta>;
   error?: ErrorDeCuentas | undefined;
   valores?: Partial<SolicitudDeAlta>;
+  /** Token del link de invitación del que vino (RF-011), para volver a él. */
+  invitacion?: string | undefined;
   onEnviar: (datos: SolicitudDeAlta) => void;
 }
 
@@ -42,6 +45,7 @@ export function FormularioDeRegistro({
   erroresDeCampo = {},
   error,
   valores = {},
+  invitacion,
   onEnviar,
 }: FormularioDeRegistroProps) {
   const campoDeApi = error?.tipo === 'api' ? campoDelError[error.codigo] : undefined;
@@ -130,7 +134,7 @@ export function FormularioDeRegistro({
       </Button>
       <p className="flex flex-wrap items-center gap-x-1 text-body-sm text-muted-foreground">
         {t.registro.yaTenesCuenta}
-        <Link href="/ingresar" className={claseDeLink}>
+        <Link href={hrefDeIngreso(invitacion)} className={claseDeLink}>
           {t.registro.ingresar}
         </Link>
       </p>

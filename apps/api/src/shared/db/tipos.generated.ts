@@ -511,6 +511,15 @@ export interface VFigura {
   votos: Int8 | null;
 }
 
+export interface VGrupo {
+  cantidad_miembros: number | null;
+  creado_en: Timestamp | null;
+  creador_usuario_id: string | null;
+  id: string | null;
+  link_token: string | null;
+  nombre: string | null;
+}
+
 export interface VGrupoActivo {
   grupo_id: string | null;
   partidos_30d: Int8 | null;
@@ -667,6 +676,7 @@ export interface DB {
   v_estadisticas_global: VEstadisticasGlobal;
   v_estadisticas_grupo: VEstadisticasGrupo;
   v_figura: VFigura;
+  v_grupo: VGrupo;
   v_grupo_activo: VGrupoActivo;
   v_jugador: VJugador;
   v_lista_espera: VListaEspera;

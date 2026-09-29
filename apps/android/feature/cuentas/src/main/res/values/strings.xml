@@ -46,6 +46,7 @@
 
     <!-- Ingreso -->
     <string name="feature_cuentas_ingreso_titulo">Iniciar sesión</string>
+    <string name="feature_cuentas_ingreso_invitacion">Iniciá sesión o creá una cuenta para unirte al grupo.</string>
     <string name="feature_cuentas_ingreso_enviar">Ingresar</string>
     <string name="feature_cuentas_ingreso_olvido">Me olvidé la contraseña</string>
     <string name="feature_cuentas_ingreso_crear_cuenta">Crear una cuenta</string>

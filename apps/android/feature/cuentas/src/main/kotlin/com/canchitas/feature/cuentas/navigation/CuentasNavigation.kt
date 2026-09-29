@@ -21,11 +21,19 @@ data object RecuperacionDestino
 @Serializable
 data object PrivacidadDestino
 
-/** Pantallas sin sesión: ingreso, registro, recuperación y política de privacidad. */
-fun NavGraphBuilder.cuentasGraph(navController: NavController, onIngresado: () -> Unit) {
+/**
+ * Pantallas sin sesión: ingreso, registro, recuperación y política de privacidad.
+ * [conInvitacion]: la app se abrió con un link de invitación que espera la sesión (RN-27).
+ */
+fun NavGraphBuilder.cuentasGraph(
+    navController: NavController,
+    onIngresado: () -> Unit,
+    conInvitacion: () -> Boolean = { false }
+) {
     composable<IngresoDestino> {
         IngresoRoute(
             onIngresado = onIngresado,
+            conInvitacion = conInvitacion(),
             onRegistrarse = { navController.navigate(RegistroDestino) },
             onRecuperar = { navController.navigate(RecuperacionDestino) }
         )

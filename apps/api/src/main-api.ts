@@ -2,6 +2,7 @@
 import { construirApi } from './composition/api.ts';
 import { crearCuentas, crearEnviadorDeMails } from './composition/cuentas.ts';
 import { crearDependencias } from './composition/dependencias.ts';
+import { autenticarConCuentas, crearGrupos } from './composition/grupos.ts';
 import { relojDelSistema } from './shared/clock.ts';
 import { leerConfigDeApi } from './shared/config.ts';
 
@@ -14,7 +15,14 @@ const cuentas = crearCuentas({
   clock: relojDelSistema,
   mails: crearEnviadorDeMails(config),
 });
-const app = await construirApi({ ...deps, cuentas, clock: relojDelSistema });
+const app = await construirApi({
+  ...deps,
+  cuentas,
+  grupos: crearGrupos({ db: deps.db, clock: relojDelSistema }),
+  autenticar: autenticarConCuentas(cuentas),
+  urlDeLaWeb: config.URL_WEB,
+  clock: relojDelSistema,
+});
 
 async function apagar(senal: string): Promise<void> {
   app.log.info({ senal }, 'apagando');

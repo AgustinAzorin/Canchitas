@@ -3,14 +3,17 @@
 // Secure y SameSite=Lax; la de Android, en `Authorization: Bearer`.
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
-import { z } from 'zod';
+import type { z } from 'zod';
 
 import { aHeaders } from '../../../shared/http/encabezados.ts';
+import type { Problem } from '../../../shared/http/problem.ts';
 import {
-  respuestaProblem,
-  tipoDeContenidoProblem,
-  type Problem,
-} from '../../../shared/http/problem.ts';
+  enviarProblema,
+  json,
+  problema,
+  seguridad,
+  sinContenido,
+} from '../../../shared/http/respuestas.ts';
 import type { CerrarSesion } from '../application/cerrar-sesion.ts';
 import type { ConsultarCuentaActual } from '../application/consultar-cuenta-actual.ts';
 import type { ErrorDeInicio, IniciarSesion } from '../application/iniciar-sesion.ts';
@@ -41,20 +44,6 @@ export interface CasosDeUsoDeCuentas {
   reenviarVerificacion: ReenviarVerificacion;
   pedirRecuperacion: PedirRecuperacion;
   restablecerContrasena: RestablecerContrasena;
-}
-
-const json = <T extends z.ZodType>(description: string, schema: T) =>
-  ({ description, content: { 'application/json': { schema } } }) as const;
-const problema = (description: string) => ({ description, ...respuestaProblem }) as const;
-const sinContenido = (description: string) => z.null().describe(description);
-
-const seguridad = [{ sesionWeb: [] }, { bearer: [] }];
-
-function enviarProblema(request: FastifyRequest, reply: FastifyReply, problem: Problem) {
-  return reply
-    .code(problem.status)
-    .type(tipoDeContenidoProblem)
-    .send({ ...problem, instance: request.url });
 }
 
 function problemaDeAlta(error: ErrorDeAlta): Problem {

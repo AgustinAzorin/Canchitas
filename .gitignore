@@ -21,6 +21,9 @@ captures/
 .externalNativeBuild/
 .cxx/
 *.keystore
+# Keystore de debug compartido: la huella de los App Links de dev es la misma en todas las máquinas.
+# Nunca firma un release (apps/android/app/build.gradle.kts).
+!apps/android/app/debug.keystore
 *.jks
 google-services.json
 

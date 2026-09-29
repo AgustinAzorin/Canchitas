@@ -12,13 +12,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.canchitas.core.designsystem.theme.Spacing
+import com.canchitas.core.ui.Aviso
+import com.canchitas.core.ui.BotonPrincipal
+import com.canchitas.core.ui.CampoDeTexto
+import com.canchitas.core.ui.Enlace
+import com.canchitas.core.ui.MarcoDePantalla
+import com.canchitas.core.ui.TipoDeAviso
 import com.canchitas.feature.cuentas.R
-import com.canchitas.feature.cuentas.componentes.Aviso
-import com.canchitas.feature.cuentas.componentes.BotonPrincipal
-import com.canchitas.feature.cuentas.componentes.CampoDeTexto
-import com.canchitas.feature.cuentas.componentes.Enlace
-import com.canchitas.feature.cuentas.componentes.MarcoDeCuenta
-import com.canchitas.feature.cuentas.componentes.TipoDeAviso
 import com.canchitas.feature.cuentas.mensajeDe
 
 @Composable
@@ -45,7 +45,7 @@ fun RecuperacionScreen(
     onVolver: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    MarcoDeCuenta(
+    MarcoDePantalla(
         titulo = stringResource(R.string.feature_cuentas_recuperacion_titulo),
         modifier = modifier
     ) {

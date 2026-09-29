@@ -12,8 +12,26 @@ android {
         applicationId = "com.canchitas.app"
         versionCode = 1
         versionName = "0.0.0"
+        // Dominio del link de invitación para los App Links (RF-011). El de producción todavía no
+        // existe: ./gradlew -Pcanchitas.dominioDeLinks=staging.canchitas.app … La web de ese
+        // dominio sirve /.well-known/assetlinks.json con la huella de la firma.
+        manifestPlaceholders["dominioDeLinks"] =
+            providers.gradleProperty("canchitas.dominioDeLinks").getOrElse("canchitas.app")
+    }
+    signingConfigs {
+        // Keystore de debug del repo, para que la huella de los App Links de dev sea una sola
+        // (la sirve la web en dev y CI). Nunca firma un release.
+        getByName("debug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
     }
     buildTypes {
+        getByName("debug") {
+            signingConfig = signingConfigs.getByName("debug")
+        }
         getByName("release") {
             isMinifyEnabled = true
             isShrinkResources = true
@@ -29,6 +47,7 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.core.data)
     implementation(projects.feature.cuentas)
+    implementation(projects.feature.grupos)
     implementation(projects.feature.salud)
     implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
@@ -40,6 +59,8 @@ dependencies {
 
     // Verificación de M0 contra la API local (SaludContraApiLocalTest).
     testImplementation(projects.core.network)
+    testImplementation(projects.core.testing)
+    testImplementation(libs.androidx.test.core)
     testImplementation(projects.core.common)
     testImplementation(libs.androidx.lifecycle.runtime.compose)
     testImplementation(libs.junit4)

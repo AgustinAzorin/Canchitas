@@ -1,4 +1,5 @@
 import { SeccionDeCuenta } from '@/features/cuentas/seccion-de-cuenta';
+import { SeccionDeGrupos } from '@/features/grupos/seccion-de-grupos';
 import { SeccionDeSalud } from '@/features/salud/seccion-de-salud';
 import { mensajes } from '@/messages/es-AR';
 
@@ -10,6 +11,7 @@ export default function Inicio() {
         <p className="mt-1 text-body text-muted-foreground">{mensajes.app.descripcion}</p>
       </header>
       <SeccionDeCuenta />
+      <SeccionDeGrupos />
       <SeccionDeSalud />
     </main>
   );

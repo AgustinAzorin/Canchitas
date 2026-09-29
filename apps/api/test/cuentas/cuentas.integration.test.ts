@@ -6,6 +6,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { construirApi } from '../../src/composition/api.ts';
 import { crearCuentas } from '../../src/composition/cuentas.ts';
 import { crearDependencias, type Dependencias } from '../../src/composition/dependencias.ts';
+import { dependenciasDeGruposInertes } from '../../src/composition/grupos-inertes.ts';
 import type { EnviadorDeMails } from '../../src/modules/cuentas/application/puertos.ts';
 import type { ConfigDeApi } from '../../src/shared/config.ts';
 import { loggerEnMemoria } from '../apoyo.ts';
@@ -63,6 +64,7 @@ beforeAll(async () => {
     consultarSalud: deps.consultarSalud,
     clock,
     cuentas: crearCuentas({ config, db: deps.db, logger: log.logger, clock, mails }),
+    ...dependenciasDeGruposInertes,
   });
 });
 

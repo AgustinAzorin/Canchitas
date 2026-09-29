@@ -93,7 +93,7 @@ Todo se corre desde la raíz con `pnpm` (Node 24.21.0 y pnpm 12.6.0, ver `.nvmrc
 
 | Comando | Qué hace |
 |---|---|
-| `./gradlew assembleDebug` | APK de debug; apunta a `http://10.0.2.2:8080/` (la PC vista desde el emulador). Con un teléfono: `-Pcanchitas.apiUrl=http://<ip-de-la-pc>:8080/`. |
+| `./gradlew assembleDebug` | APK de debug, firmado con el keystore de debug del repo; apunta a `http://10.0.2.2:8080/` (la PC vista desde el emulador). Con un teléfono: `-Pcanchitas.apiUrl=http://<ip-de-la-pc>:8080/`. El dominio de los App Links del link de invitación sale de `-Pcanchitas.dominioDeLinks=<dominio>` (por defecto `canchitas.app`). |
 | `./gradlew ktlintCheck detekt lint` | Estilo, análisis estático y Android Lint (advertencias como errores). `ktlintFormat` corrige el formato. |
 | `./gradlew testDebugUnitTest` | Tests de JVM y Robolectric. Con `CANCHITAS_API_URL=http://localhost:8080/` también corre la app contra la API local. |
 | `./gradlew recordRoborazziDebug` / `verifyRoborazziDebug` | Graba o verifica los screenshots de Roborazzi. |

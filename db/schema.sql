@@ -1519,6 +1519,20 @@ CREATE VIEW public.v_estadisticas_grupo AS
 
 
 --
+-- Name: v_grupo; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.v_grupo AS
+SELECT
+    NULL::uuid AS id,
+    NULL::text AS nombre,
+    NULL::text AS link_token,
+    NULL::uuid AS creador_usuario_id,
+    NULL::timestamp with time zone AS creado_en,
+    NULL::integer AS cantidad_miembros;
+
+
+--
 -- Name: v_grupo_activo; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -2358,6 +2372,23 @@ CREATE INDEX voto_jugador_idx ON public.voto USING btree (jugador_id);
 
 
 --
+-- Name: v_grupo _RETURN; Type: RULE; Schema: public; Owner: -
+--
+
+CREATE OR REPLACE VIEW public.v_grupo AS
+ SELECT g.id,
+    g.nombre,
+    g.link_token,
+    g.creador_usuario_id,
+    g.creado_en,
+    (count(m.jugador_id) FILTER (WHERE (m.salida_en IS NULL)))::integer AS cantidad_miembros
+   FROM (public.grupo g
+     LEFT JOIN public.miembro m ON ((m.grupo_id = g.id)))
+  WHERE (g.borrado_en IS NULL)
+  GROUP BY g.id;
+
+
+--
 -- Name: auditoria auditoria_inmutable; Type: TRIGGER; Schema: public; Owner: -
 --
 
@@ -3023,4 +3054,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20260929133311'),
     ('20260929133313'),
     ('20260929133315'),
-    ('20260929133317');
+    ('20260929133317'),
+    ('20260929163517');

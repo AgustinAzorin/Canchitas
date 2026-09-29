@@ -5,16 +5,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.canchitas.core.ui.Aviso
+import com.canchitas.core.ui.Enlace
+import com.canchitas.core.ui.MarcoDePantalla
+import com.canchitas.core.ui.TipoDeAviso
 import com.canchitas.feature.cuentas.R
-import com.canchitas.feature.cuentas.componentes.Aviso
-import com.canchitas.feature.cuentas.componentes.Enlace
-import com.canchitas.feature.cuentas.componentes.MarcoDeCuenta
-import com.canchitas.feature.cuentas.componentes.TipoDeAviso
 
 /** RNF-018: la política se puede leer antes de aceptarla. Texto provisorio hasta M9. */
 @Composable
 fun PrivacidadScreen(onVolver: () -> Unit, modifier: Modifier = Modifier) {
-    MarcoDeCuenta(
+    MarcoDePantalla(
         titulo = stringResource(R.string.feature_cuentas_privacidad_titulo),
         modifier = modifier
     ) {
