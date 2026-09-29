@@ -8,9 +8,11 @@ services:
     image: canchitas-postgres:dev
     environment:
       POSTGRES_USER: postgres
+      # Solo dev: sin contraseña para el superusuario y el puerto solo en la máquina local.
+      # Los roles de la app sí usan contraseña (scripts/src/db.ts).
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
-      - '5433:5432'
+      - '127.0.0.1:5433:5432'
     volumes:
       - postgres:/var/lib/postgresql/data
       - ../../db:/db

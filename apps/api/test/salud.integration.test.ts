@@ -44,7 +44,13 @@ beforeAll(async () => {
   ]);
   // Contraseña de un solo uso: el contenedor vive lo que dura el test.
   const clave = randomUUID();
-  await enPostgres(['psql', '-U', 'postgres', '-c', `ALTER ROLE canchitas_api PASSWORD '${clave}'`]);
+  await enPostgres([
+    'psql',
+    '-U',
+    'postgres',
+    '-c',
+    `ALTER ROLE canchitas_api PASSWORD '${clave}'`,
+  ]);
 
   const url = `postgres://canchitas_api:${clave}@${postgres.getHost()}:${String(postgres.getMappedPort(5432))}/canchitas`;
   deps = crearDependencias(
