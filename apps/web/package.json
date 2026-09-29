@@ -12,8 +12,9 @@
     "typecheck": "next typegen && tsc --noEmit",
     "storybook": "storybook dev --port 6006 --no-open",
     "build-storybook": "storybook build",
-    "test:visual": "playwright test --project=visual",
-    "e2e": "playwright test --project=e2e"
+    "test:visual": "docker run --rm --network host --ipc=host -v \"$PWD/../..:/repo\" -w /repo/apps/web mcr.microsoft.com/playwright:v1.63.0-noble npx playwright test --config playwright.visual.config.ts",
+    "e2e": "playwright test",
+    "test:visual:update": "docker run --rm --network host --ipc=host -v \"$PWD/../..:/repo\" -w /repo/apps/web mcr.microsoft.com/playwright:v1.63.0-noble npx playwright test --config playwright.visual.config.ts --update-snapshots"
   },
   "dependencies": {
     "@tanstack/react-query": "5.104.0",

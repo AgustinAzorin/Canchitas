@@ -87,7 +87,7 @@ Todo se corre desde la raíz con `pnpm` (Node 24.21.0 y pnpm 12.6.0, ver `.nvmrc
 | `pnpm db:lint` | squawk y la convención de `SET LOCAL ROLE`. |
 | `pnpm db:reset` | Borra el Postgres de dev con sus datos. |
 
-**Web** (`pnpm --filter @canchitas/web <comando>`): `dev`, `build`, `storybook`, `build-storybook`, `test:visual` (una captura y axe por story; necesita `build-storybook`) y `e2e` (Playwright con axe contra el stack de `pnpm dev`).
+**Web** (`pnpm --filter @canchitas/web <comando>`): `dev`, `build`, `storybook`, `build-storybook`, `test:visual` (una captura y axe por story, dentro de la imagen oficial de Playwright para que las capturas sean iguales en todas las máquinas; necesita `build-storybook`; `test:visual:update` las regraba) y `e2e` (Playwright con axe contra el stack de `pnpm dev`).
 
 **Android** (dentro de `apps/android`):
 

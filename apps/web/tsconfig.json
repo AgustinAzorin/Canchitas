@@ -11,6 +11,7 @@
     ".storybook/*.tsx",
     ".next/types/**/*.ts",
     "*.config.ts",
+    "playwright.comun.ts",
     "*.config.mjs",
     "eslint.config.js"
   ],
