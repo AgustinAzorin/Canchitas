@@ -5,7 +5,10 @@ import com.canchitas.core.network.UuidComoTexto
 import com.canchitas.core.network.cuentas.CuentasNetworkDataSource
 import com.canchitas.core.network.cuentas.RetrofitCuentasNetwork
 import com.canchitas.core.network.generated.apis.CuentasApi
+import com.canchitas.core.network.generated.apis.GruposApi
 import com.canchitas.core.network.generated.apis.SaludApi
+import com.canchitas.core.network.grupos.GruposNetworkDataSource
+import com.canchitas.core.network.grupos.RetrofitGruposNetwork
 import com.canchitas.core.network.salud.RetrofitSaludNetwork
 import com.canchitas.core.network.salud.SaludNetworkDataSource
 import com.canchitas.core.network.sesion.InterceptorDeSesion
@@ -63,6 +66,10 @@ object NetworkModule {
     @Singleton
     fun providesCuentasApi(retrofit: Retrofit): CuentasApi = retrofit.create(CuentasApi::class.java)
 
+    @Provides
+    @Singleton
+    fun providesGruposApi(retrofit: Retrofit): GruposApi = retrofit.create(GruposApi::class.java)
+
     fun crearRetrofit(baseUrl: String, json: Json, okHttpClient: OkHttpClient): Retrofit =
         Retrofit.Builder()
             .baseUrl(baseUrl)
@@ -79,4 +86,7 @@ internal abstract class NetworkBindsModule {
 
     @Binds
     abstract fun bindsCuentasNetwork(network: RetrofitCuentasNetwork): CuentasNetworkDataSource
+
+    @Binds
+    abstract fun bindsGruposNetwork(network: RetrofitGruposNetwork): GruposNetworkDataSource
 }

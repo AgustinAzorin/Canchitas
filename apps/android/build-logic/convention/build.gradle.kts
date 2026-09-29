@@ -18,6 +18,7 @@ dependencies {
     compileOnly(libs.ksp.gradlePlugin)
     compileOnly(libs.ktlint.gradlePlugin)
     compileOnly(libs.roborazzi.gradlePlugin)
+    compileOnly(libs.room.gradlePlugin)
 }
 
 gradlePlugin {
@@ -45,6 +46,10 @@ gradlePlugin {
         register("hilt") {
             id = libs.plugins.canchitas.hilt.get().pluginId
             implementationClass = "HiltConventionPlugin"
+        }
+        register("room") {
+            id = libs.plugins.canchitas.room.get().pluginId
+            implementationClass = "RoomConventionPlugin"
         }
         register("jvmLibrary") {
             id = libs.plugins.canchitas.jvm.library.get().pluginId

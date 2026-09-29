@@ -38,7 +38,8 @@ interface CuentasRepository {
 
 internal class DefaultCuentasRepository @Inject constructor(
     private val network: CuentasNetworkDataSource,
-    private val local: SesionLocal
+    private val local: SesionLocal,
+    private val datosDelUsuario: DatosDelUsuario
 ) : CuentasRepository {
     override val sesion: Flow<Sesion> = local.sesion.map { guardada ->
         if (guardada == null) Sesion.SinSesion else Sesion.Iniciada(guardada.aCuenta())
@@ -63,7 +64,7 @@ internal class DefaultCuentasRepository @Inject constructor(
             resultado is Resultado.Exito -> local.guardar(resultado.valor.aGuardada(guardada.token))
 
             // La sesión venció (30 días sin uso) o se cerró desde otro lado.
-            resultado == Resultado.Fallo(SIN_SESION) -> local.borrar()
+            resultado == Resultado.Fallo(SIN_SESION) -> olvidarSesion()
         }
         return resultado
     }
@@ -76,11 +77,17 @@ internal class DefaultCuentasRepository @Inject constructor(
         local.cargar() ?: return Resultado.Exito(Unit)
         val resultado = network.cerrarSesion()
         return if (resultado is Resultado.Exito || resultado == Resultado.Fallo(SIN_SESION)) {
-            local.borrar()
+            olvidarSesion()
             Resultado.Exito(Unit)
         } else {
             resultado
         }
+    }
+
+    /** RF-007: sin sesión, el dispositivo no muestra nada del usuario. */
+    private suspend fun olvidarSesion() {
+        datosDelUsuario.borrar()
+        local.borrar()
     }
 
     override suspend fun reenviarVerificacion(email: String): Resultado<Unit> =

@@ -10,4 +10,5 @@ plugins {
     alias(libs.plugins.ktlint) apply false
     alias(libs.plugins.openapi.generator) apply false
     alias(libs.plugins.roborazzi) apply false
+    alias(libs.plugins.room) apply false
 }

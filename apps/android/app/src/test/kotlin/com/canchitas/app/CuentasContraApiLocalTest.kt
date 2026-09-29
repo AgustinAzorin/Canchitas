@@ -4,6 +4,7 @@ import com.canchitas.core.model.DatosDeAlta
 import com.canchitas.core.model.ErrorDeApi
 import com.canchitas.core.model.EstadoDeCuenta
 import com.canchitas.core.model.Resultado
+import com.canchitas.core.network.LlamadorDeApi
 import com.canchitas.core.network.cuentas.RetrofitCuentasNetwork
 import com.canchitas.core.network.di.NetworkModule
 import com.canchitas.core.network.generated.apis.CuentasApi
@@ -32,7 +33,8 @@ class CuentasContraApiLocalTest {
             ).build()
             val json = NetworkModule.providesJson()
             val retrofit = NetworkModule.crearRetrofit(requireNotNull(url), json, cliente)
-            val red = RetrofitCuentasNetwork(retrofit.create(CuentasApi::class.java), json)
+            val red =
+                RetrofitCuentasNetwork(retrofit.create(CuentasApi::class.java), LlamadorDeApi(json))
             val sufijo = System.currentTimeMillis().toString(36)
             val email = "android.$sufijo@mail.com"
 

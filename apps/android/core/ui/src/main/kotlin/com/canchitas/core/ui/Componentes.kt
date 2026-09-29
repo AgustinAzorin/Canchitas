@@ -1,4 +1,4 @@
-package com.canchitas.feature.cuentas.componentes
+package com.canchitas.core.ui
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
@@ -41,9 +41,9 @@ import com.canchitas.core.designsystem.icon.CanchitasIcons
 import com.canchitas.core.designsystem.theme.CanchitasTheme
 import com.canchitas.core.designsystem.theme.Spacing
 
-/** Pantalla de cuenta: una columna con título que scrollea (GUIDELINES, layout). */
+/** Pantalla simple: una columna con título que scrollea (GUIDELINES, layout). */
 @Composable
-internal fun MarcoDeCuenta(
+fun MarcoDePantalla(
     titulo: String,
     modifier: Modifier = Modifier,
     contenido: @Composable () -> Unit
@@ -67,7 +67,7 @@ internal fun MarcoDeCuenta(
 
 /** TextField del design system: label visible, ayuda o error debajo (GUIDELINES, TextField). */
 @Composable
-internal fun CampoDeTexto(
+fun CampoDeTexto(
     valor: String,
     onCambio: (String) -> Unit,
     etiqueta: String,
@@ -101,7 +101,7 @@ internal fun CampoDeTexto(
 
 /** Botón primario de pie de formulario: 48 dp, ancho completo, spinner mientras envía. */
 @Composable
-internal fun BotonPrincipal(
+fun BotonPrincipal(
     texto: String,
     cargando: Boolean,
     onClick: () -> Unit,
@@ -129,7 +129,7 @@ internal fun BotonPrincipal(
 }
 
 @Composable
-internal fun BotonSecundario(
+fun BotonSecundario(
     texto: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -165,7 +165,7 @@ internal fun BotonSecundario(
 
 /** Link de navegación: texto, no botón relleno (GUIDELINES, Button). */
 @Composable
-internal fun Enlace(texto: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun Enlace(texto: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
     TextButton(
         onClick = onClick,
         shape = MaterialTheme.shapes.medium,
@@ -179,7 +179,7 @@ enum class TipoDeAviso { Info, Exito, Advertencia, Error }
 
 /** Alert: ícono más texto sobre el color del rol (GUIDELINES, Alert). El texto dice qué pasa. */
 @Composable
-internal fun Aviso(
+fun Aviso(
     tipo: TipoDeAviso,
     texto: String,
     modifier: Modifier = Modifier,
@@ -248,7 +248,7 @@ private fun ContenidoDeAviso(
 
 /** Fila con una casilla y su texto: la fila entera es tocable (48 dp). */
 @Composable
-internal fun FilaCentrada(modifier: Modifier = Modifier, contenido: @Composable () -> Unit) {
+fun FilaCentrada(modifier: Modifier = Modifier, contenido: @Composable () -> Unit) {
     Row(
         modifier = modifier
             .fillMaxWidth()

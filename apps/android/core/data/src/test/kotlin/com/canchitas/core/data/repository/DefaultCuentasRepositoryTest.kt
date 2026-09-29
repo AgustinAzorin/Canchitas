@@ -41,6 +41,17 @@ class DefaultCuentasRepositoryTest {
         override suspend fun pedirRecuperacion(email: String) = Resultado.Exito(Unit)
     }
 
+    /** Cuenta cuántas veces se borraron los datos del usuario (grupos en Room). */
+    private class DatosFalsos : DatosDelUsuario {
+        var borrados = 0
+
+        override suspend fun borrar() {
+            borrados++
+        }
+    }
+
+    private val datos = DatosFalsos()
+
     /** En estos tests el cifrado no importa: lo prueba core:datastore. */
     private object SinCifrar : Cifrador {
         override fun cifrar(datos: ByteArray) = datos
@@ -56,7 +67,7 @@ class DefaultCuentasRepositoryTest {
                 produceFile = { Files.createTempDirectory("sesion").toFile().resolve("sesion") }
             )
         )
-        return DefaultCuentasRepository(red, local) to local
+        return DefaultCuentasRepository(red, local, datos) to local
     }
 
     @Test
@@ -112,6 +123,7 @@ class DefaultCuentasRepositoryTest {
         repositorio.actualizarCuenta()
 
         assertNull(local.cargar())
+        assertEquals(1, datos.borrados)
     }
 
     @Test
@@ -136,6 +148,7 @@ class DefaultCuentasRepositoryTest {
 
         assertNull(local.cargar())
         assertNull(TokenDeSesionLocal(local).tokenActual())
+        assertEquals(1, datos.borrados)
     }
 
     @Test
@@ -149,5 +162,6 @@ class DefaultCuentasRepositoryTest {
 
         assertEquals(Resultado.Fallo(ErrorDeApi.SinConexion), repositorio.cerrarSesion())
         assertEquals("abc", local.cargar()?.token)
+        assertEquals(0, datos.borrados)
     }
 }

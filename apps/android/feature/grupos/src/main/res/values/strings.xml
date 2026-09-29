@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Textos de grupos (RF-010, RF-011, RF-012). Voseo, sin exclamaciones ni emojis (GUIDELINES). -->
+<resources>
+    <!-- Tus grupos (RF-010) -->
+    <string name="feature_grupos_titulo">Tus grupos</string>
+    <string name="feature_grupos_consultando">Buscando tus grupos…</string>
+    <string name="feature_grupos_ninguno">Todavía no estás en ningún grupo. Creá uno o pedile el link a un admin.</string>
+    <plurals name="feature_grupos_miembros">
+        <item quantity="one">%d miembro</item>
+        <item quantity="other">%d miembros</item>
+    </plurals>
+    <string name="feature_grupos_rol_admin">Admin</string>
+    <string name="feature_grupos_rol_jugador">Jugador</string>
+    <string name="feature_grupos_crear_titulo">Crear un grupo</string>
+    <string name="feature_grupos_crear_nombre">Nombre del grupo</string>
+    <string name="feature_grupos_crear_ayuda">Hasta 60 caracteres. Por ejemplo: Los del jueves.</string>
+    <string name="feature_grupos_crear_enviar">Crear grupo</string>
+    <string name="feature_grupos_obligatorio">Completá este campo.</string>
+    <string name="feature_grupos_nombre_largo">El nombre puede tener hasta 60 caracteres.</string>
+
+    <!-- Un grupo (RN-26, RF-012) -->
+    <string name="feature_grupos_consultando_grupo">Cargando el grupo…</string>
+    <string name="feature_grupos_volver">Volver</string>
+    <string name="feature_grupos_tu_rol">Tu rol: %1$s</string>
+    <string name="feature_grupos_link_titulo">Link de invitación</string>
+    <string name="feature_grupos_link_ayuda">Quien lo abra con su cuenta verificada se une al grupo sin que lo apruebes.</string>
+    <string name="feature_grupos_compartir">Compartir link</string>
+    <string name="feature_grupos_compartir_titulo">Compartir el link del grupo</string>
+    <string name="feature_grupos_compartir_texto">Sumate a %1$s en Canchitas: %2$s</string>
+    <string name="feature_grupos_regenerar">Regenerar link</string>
+    <string name="feature_grupos_regenerar_titulo">¿Regenerar el link?</string>
+    <string name="feature_grupos_regenerar_aviso">El link actual va a dejar de funcionar. Quien lo tenga no va a poder unirse con él.</string>
+    <string name="feature_grupos_regenerar_confirmar">Sí, regenerar</string>
+    <string name="feature_grupos_regenerar_cancelar">Cancelar</string>
+    <string name="feature_grupos_regenerado">Listo, generamos un link nuevo. El anterior ya no sirve.</string>
+    <string name="feature_grupos_sin_link">Para sumar gente, pedile el link de invitación a un admin del grupo.</string>
+
+    <!-- Invitación (RF-011, RF-004, RN-27, RN-28) -->
+    <string name="feature_grupos_invitacion_titulo">Invitación a un grupo</string>
+    <string name="feature_grupos_invitacion_consultando">Abriendo la invitación…</string>
+    <string name="feature_grupos_invitacion_te_invitan">Te invitaron a</string>
+    <string name="feature_grupos_invitacion_unirme">Unirme al grupo</string>
+    <string name="feature_grupos_invitacion_sin_verificar">Para unirte tenés que verificar tu mail. Abrí el enlace que te mandamos y volvé a este link.</string>
+    <string name="feature_grupos_invitacion_reenviar">Reenviar mail</string>
+    <string name="feature_grupos_invitacion_reenviado">Si la cuenta existe y no está verificada, te mandamos un enlace nuevo.</string>
+    <string name="feature_grupos_invitacion_ya_verifique">Ya verifiqué mi mail</string>
+    <string name="feature_grupos_invitacion_expulsado">Te expulsaron de este grupo. Solo un admin puede volver a agregarte.</string>
+    <string name="feature_grupos_invitacion_ir_al_inicio">Ir al inicio</string>
+
+    <!-- Errores por el type del problem+json (ADR 0008) -->
+    <string name="feature_grupos_error_nombre_invalido">El nombre tiene que tener entre 1 y 60 caracteres.</string>
+    <string name="feature_grupos_error_sin_verificar">Tenés que verificar tu mail antes de crear un grupo o unirte a uno.</string>
+    <string name="feature_grupos_error_no_encontrado">Este grupo no existe o no sos miembro.</string>
+    <string name="feature_grupos_error_requiere_admin">Solo un admin del grupo puede hacer esto.</string>
+    <string name="feature_grupos_error_expulsado">Te expulsaron de este grupo. Solo un admin puede volver a agregarte.</string>
+    <string name="feature_grupos_error_link_invalido">Este link de invitación ya no es válido. Pedile el link nuevo a un admin.</string>
+    <string name="feature_grupos_error_sin_sesion">Tu sesión venció. Iniciá sesión de nuevo.</string>
+    <string name="feature_grupos_error_sin_conexion">Sin conexión. No se guardó nada; probá de nuevo.</string>
+    <string name="feature_grupos_error_inesperado">Algo salió mal de nuestro lado. Probá de nuevo en unos minutos.</string>
+</resources>
