@@ -9,13 +9,17 @@ import {
   type ZodTypeProvider,
 } from 'fastify-type-provider-zod';
 
+import { rutasDeCuentas, type CasosDeUsoDeCuentas } from '../modules/cuentas/http/routes.ts';
 import type { ConsultarSalud } from '../salud/application/consultar-salud.ts';
 import { rutasDeSalud } from '../salud/http/routes.ts';
+import type { Clock } from '../shared/clock.ts';
 import { registrarManejoDeErrores } from '../shared/http/manejo-de-errores.ts';
 
 export interface DependenciasHttp {
   logger: FastifyBaseLogger;
   consultarSalud: ConsultarSalud;
+  cuentas: CasosDeUsoDeCuentas;
+  clock: Clock;
 }
 
 export async function construirApi(deps: DependenciasHttp): Promise<FastifyInstance> {
@@ -32,6 +36,21 @@ export async function construirApi(deps: DependenciasHttp): Promise<FastifyInsta
         version: '1.0.0',
         description: 'Contrato generado desde los esquemas zod (ADR 0007). No se edita a mano.',
       },
+      components: {
+        securitySchemes: {
+          sesionWeb: {
+            type: 'apiKey',
+            in: 'cookie',
+            name: '__Secure-canchitas.session_token',
+            description: 'Cookie HttpOnly, Secure y SameSite=Lax de la web (ADR 0009)',
+          },
+          bearer: {
+            type: 'http',
+            scheme: 'bearer',
+            description: 'Token de Android: 30 días desde el último uso (RNF-012)',
+          },
+        },
+      },
     },
     transform: jsonSchemaTransform,
     transformObject: jsonSchemaTransformObject,
@@ -39,6 +58,7 @@ export async function construirApi(deps: DependenciasHttp): Promise<FastifyInsta
 
   const rutas = app.withTypeProvider<ZodTypeProvider>();
   await rutas.register(rutasDeSalud(deps.consultarSalud));
+  await rutas.register(rutasDeCuentas(deps.cuentas, () => deps.clock.ahora()));
 
   return app;
 }

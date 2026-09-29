@@ -24,10 +24,216 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/cuentas": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Crear una cuenta
+         * @description RF-001, RF-002, RF-003, RN-20 y RNF-018. Crea la cuenta en estado "Sin verificar" y manda el mail de verificación (RF-004). No inicia sesión.
+         */
+        post: operations["registrarCuenta"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/cuentas/sesion": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Iniciar sesión en la web
+         * @description RF-005 y RNF-011. Deja la sesión en una cookie HttpOnly, Secure y SameSite=Lax (ADR 0009). Para Android se usa iniciarSesionConToken.
+         */
+        post: operations["iniciarSesion"];
+        /**
+         * Cerrar la sesión del dispositivo actual
+         * @description RF-007. Borra la sesión (y el dispositivo registrado con ella, que deja de recibir push) y vence la cookie de la web.
+         */
+        delete: operations["cerrarSesion"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/cuentas/sesion/token": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Iniciar sesión en Android
+         * @description RF-005, RNF-011 y RNF-012. Devuelve un bearer que dura 30 días desde el último uso (ADR 0009). No deja cookie.
+         */
+        post: operations["iniciarSesionConToken"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/cuentas/yo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * La cuenta de la sesión actual
+         * @description RF-004 y RF-005. Dice si hay sesión y si la cuenta está verificada.
+         */
+        get: operations["consultarCuentaActual"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/cuentas/verificacion": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Verificar el mail con el enlace
+         * @description RF-004 y RNF-014. Activa la cuenta. El enlace vence a las 24 horas y sirve una sola vez: si la cuenta ya está activa, se rechaza.
+         */
+        post: operations["verificarEmail"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/cuentas/verificacion/reenvio": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Reenviar el mail de verificación
+         * @description RF-004. Responde igual exista o no la cuenta, para no revelar cuáles existen.
+         */
+        post: operations["reenviarVerificacion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/cuentas/recuperacion": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Pedir el mail para definir una contraseña nueva
+         * @description RF-006. Responde igual exista o no la cuenta. El enlace vence en 1 hora.
+         */
+        post: operations["pedirRecuperacion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/cuentas/recuperacion/confirmacion": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Definir la contraseña nueva con el enlace
+         * @description RF-006 y RNF-014. El enlace sirve una sola vez. Cierra todas las sesiones abiertas de la cuenta.
+         */
+        post: operations["restablecerContrasena"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        SolicitudDeAltaInput: {
+            /**
+             * Format: email
+             * @description Mail de la cuenta
+             */
+            email: string;
+            /** @description Entre 8 y 128 caracteres */
+            contrasena: string;
+            /** @description 3 a 20 letras minúsculas, números, punto o guion bajo (RF-003). Se guarda en minúsculas. */
+            nombreUsuario: string;
+            /**
+             * Format: date
+             * @description AAAA-MM-DD (RF-002)
+             */
+            fechaNacimiento: string;
+            /** @description Aceptación de la política de privacidad (RNF-018) */
+            aceptaPrivacidad: boolean;
+        };
+        SolicitudDeInicioInput: {
+            /**
+             * Format: email
+             * @description Mail de la cuenta
+             */
+            email: string;
+            contrasena: string;
+        };
+        SolicitudConEmailInput: {
+            /**
+             * Format: email
+             * @description Mail de la cuenta
+             */
+            email: string;
+        };
+        SolicitudDeVerificacionInput: {
+            /** @description Token del enlace del mail */
+            token: string;
+        };
+        SolicitudDeRestablecimientoInput: {
+            /** @description Token del enlace del mail */
+            token: string;
+            contrasenaNueva: string;
+        };
         Problem: {
             /** Format: uri */
             type: string;
@@ -42,6 +248,26 @@ export interface components {
                 campo: string;
                 mensaje: string;
             }[];
+        };
+        /** @enum {string} */
+        EstadoDeCuenta: "sin_verificar" | "activa";
+        Cuenta: {
+            /** Format: uuid */
+            id: string;
+            email: string;
+            nombreUsuario: string;
+            estado: components["schemas"]["EstadoDeCuenta"];
+        };
+        CuentaCreada: {
+            email: string;
+            nombreUsuario: string;
+            /** @constant */
+            estado: "sin_verificar";
+        };
+        SesionConToken: {
+            /** @description Bearer para `Authorization`. Vence a los 30 días sin uso (RNF-012). */
+            token: string;
+            cuenta: components["schemas"]["Cuenta"];
         };
         Salud: {
             /** @constant */
@@ -83,6 +309,303 @@ export interface operations {
             };
             /** @description La base no responde */
             503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    registrarCuenta: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SolicitudDeAltaInput"];
+            };
+        };
+        responses: {
+            /** @description Cuenta creada sin verificar */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CuentaCreada"];
+                };
+            };
+            /** @description El mail (RF-001) o el nombre de usuario (RF-003) ya están en uso */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Menor de 18 años (RF-002), nombre de usuario o fecha inválidos, o sin aceptar la privacidad (RNF-018) */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    iniciarSesion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SolicitudDeInicioInput"];
+            };
+        };
+        responses: {
+            /** @description Sesión iniciada; la cookie viaja en Set-Cookie */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Cuenta"];
+                };
+            };
+            /** @description El mail o la contraseña no son correctos, sin decir cuál (RF-005) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Inicio de sesión bloqueado por intentos fallidos (RNF-011). El encabezado Retry-After dice en cuántos segundos termina. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    cerrarSesion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Sesión cerrada */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description No hay sesión */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    iniciarSesionConToken: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SolicitudDeInicioInput"];
+            };
+        };
+        responses: {
+            /** @description Sesión iniciada */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SesionConToken"];
+                };
+            };
+            /** @description El mail o la contraseña no son correctos, sin decir cuál (RF-005) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Inicio de sesión bloqueado por intentos fallidos (RNF-011). El encabezado Retry-After dice en cuántos segundos termina. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    consultarCuentaActual: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Cuenta de la sesión */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Cuenta"];
+                };
+            };
+            /** @description No hay sesión */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    verificarEmail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SolicitudDeVerificacionInput"];
+            };
+        };
+        responses: {
+            /** @description Cuenta activa */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description El enlace venció o no es válido */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description El enlace ya se usó (RNF-014) */
+            410: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    reenviarVerificacion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SolicitudConEmailInput"];
+            };
+        };
+        responses: {
+            /** @description Si la cuenta existe y no está verificada, se manda el mail */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    pedirRecuperacion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SolicitudConEmailInput"];
+            };
+        };
+        responses: {
+            /** @description Si la cuenta existe, se manda el mail */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    restablecerContrasena: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SolicitudDeRestablecimientoInput"];
+            };
+        };
+        responses: {
+            /** @description Contraseña cambiada */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description El enlace venció, no es válido o ya se usó */
+            400: {
                 headers: {
                     [name: string]: unknown;
                 };
