@@ -79,7 +79,7 @@ SELECT is_empty(
 INSERT INTO sesion (usuario_id, token, expira_en, actualizado_en)
 SELECT id, 'tok-ana-2', now() + interval '30 days', now() FROM ana;
 INSERT INTO credencial (usuario_id, cuenta_id, proveedor_id, contrasena_hash, actualizado_en)
-SELECT id, id::text, 'credential', '$argon2id$v=19$m=19456,t=2,p=1$c2Fs$aGFzaA', now() FROM ana;
+SELECT id, id::text, 'credential', 'hash-de-prueba', now() FROM ana;
 DELETE FROM usuario WHERE nombre_usuario = 'ana';
 SELECT is_empty($$SELECT 1 FROM sesion WHERE token = 'tok-ana-2'$$, 'las sesiones se van con el usuario');
 SELECT is_empty($$SELECT 1 FROM credencial WHERE proveedor_id = 'credential'$$, 'la credencial se va con el usuario');
