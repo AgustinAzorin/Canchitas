@@ -144,7 +144,7 @@ jobs:
           pnpm build
           nohup pnpm start > "$RUNNER_TEMP/web.log" 2>&1 &
           pnpm e2e
-      - name: Storybook y tests visuales
+      - name: Storybook y tests visuales (en la imagen de Playwright, como en local)
         working-directory: apps/web
         run: |
           pnpm build-storybook
@@ -184,3 +184,4 @@ jobs:
           path: |
             apps/android/**/build/reports
             apps/android/**/build/outputs/roborazzi
+            apps/android/app/build/outputs/salud_contra_api_local.png
